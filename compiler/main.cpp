@@ -7,7 +7,7 @@ void attGrammer1func(const Parser* parser) {
 
 Parser::Parser() {
 	// 初始化LR分析表
-	LRTable.actionSymbols.push_back("i");
+	LRTable.actionSymbols.push_back("Number");
 	LRTable.actionSymbols.push_back("+");
 	LRTable.actionSymbols.push_back("*");
 	LRTable.actionSymbols.push_back("(");
@@ -206,15 +206,15 @@ int main() {
 	// F->i
 	AttGrammer attGrammer6;
 	attGrammer6.left = "F";
-	attGrammer6.right.push_back("i");
+	attGrammer6.right.push_back("Number");
 	parser.attGrammers.push_back(attGrammer6);
 
 	vector<string> str;
-	str.push_back("i");
+	str.push_back("123");
 	str.push_back("*");
-	str.push_back("i");
+	str.push_back("-345");
 	str.push_back("+");
-	str.push_back("i");
+	str.push_back("457.22");
 	str.push_back("#");
 
 	std::cout << parser.parse(str) << std::endl;

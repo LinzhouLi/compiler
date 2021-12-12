@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <string>
+#include <sstream>
 
 using std::string;
 using std::vector;
@@ -43,7 +44,7 @@ public:
 	int falseList;
 	int nextList;
 	int quad;
-	int place;
+	double place;
 	string op;
 
 	Attribute() : type(""), trueList(-1), falseList(-1), nextList(-1), quad(-1), place(0), op("") { }
@@ -62,4 +63,45 @@ int indexOf(const vector<T>& vec, const T& item) {
 		}
 	}
 	return -1;
+}
+
+// 判断字符串是否为数字类型
+bool isNumber(const string& str) {
+	std::istringstream sin(str);
+	double test;
+	return sin >> test && sin.eof();
+}
+
+// 判断字符串是否为布尔型
+bool isBool(const string& str) {
+	return str == string("true") || str == string("false");
+}
+
+// 字符串转换为数字类型
+double str2Number(const string& str) {
+	std::istringstream sin(str);
+	double test;
+	sin >> test;
+	return test;
+}
+
+// 字符串转换为布尔型
+bool str2Bool(const string& str) {
+	if (str == string("true")) {
+		return true;
+	}
+	else return false;
+}
+
+// 字符串分割
+vector<string> split(const string& str, const string& delimiter) {
+	string::size_type lastPos = str.find_first_not_of(delimiter, 0);
+	string::size_type pos = str.find_first_of(delimiter, lastPos);
+	vector<string> tokens;
+	while (string::npos != pos || string::npos != lastPos) {
+		tokens.push_back(str.substr(lastPos, pos - lastPos));
+		lastPos = str.find_first_not_of(delimiter, pos);
+		pos = str.find_first_of(delimiter, lastPos);
+	}
+	return tokens;
 }
