@@ -217,6 +217,7 @@ int main() {
 	str.push_back("457.22");
 	str.push_back("#");
 
+	parser.init(); // 初始化一下
 	std::cout << parser.parse(str) << std::endl;
 	return 0;
 }

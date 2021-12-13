@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Global.h"
 #include "LRAnalysisTable.h"
+#include "SymbolTable.h"
 
 using std::vector;
 using std::stack;
@@ -32,6 +33,7 @@ private:
 public:
 	int nextQuad; // 下一条四元式的标号
 	vector<AttGrammer> attGrammers; // 属性文法
+	SymbolTable symbolTabel; // 符号表
 
 	Parser();
 
