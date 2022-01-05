@@ -16,10 +16,10 @@ class AttGrammer { // 属性文法
 public:
 	string left;
 	vector<string> right;
-	void (*function)(const Parser* parser); // 语义动作 (函数指针)
+	void (*function)(Parser* parser); // 语义动作 (函数指针)
 
 	AttGrammer() : function(nullptr) { }
-	AttGrammer(const string& _left, const vector<string>& _right, void (*f)(const Parser* parser) = nullptr) : left(_left), right(_right), function(f) { }
+	AttGrammer(const string& _left, const vector<string>& _right, void (*f)(Parser* parser) = nullptr) : left(_left), right(_right), function(f) { }
 };
 
 class Parser {

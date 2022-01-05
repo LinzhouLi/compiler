@@ -1,6 +1,6 @@
 #include "Parser.h"
 
-void attGrammer1func(const Parser* parser) {
+void attGrammer1func(Parser* parser) {
 	// 某文法的语义动作
 	return;
 }
