@@ -2,10 +2,12 @@
 
 #include <vector>
 #include <stack>
+#include <string>
 #include <iostream>
 #include "Global.h"
 #include "LRAnalysisTable.h"
 #include "SymbolTable.h"
+#include "Global.h"
 
 using std::vector;
 using std::stack;
@@ -30,6 +32,8 @@ private:
 	stack<int> states; // 状态栈
 	stack<string> symbols; // 符号栈
 
+	int tempId;
+
 public:
 	int nextQuad; // 下一条四元式的标号
 	vector<AttGrammer> attGrammers; // 属性文法
@@ -45,7 +49,19 @@ public:
 	int merge(const int& p1, const int& p2);
 	void backPatch(const int& p, const int& t);
 	void print();
+	string getNewTemp();
 };
+
+Parser::Parser() {
+	nextQuad = 0;
+	tempId = 0;
+}
+
+string Parser::getNewTemp() {
+	string newTemp = "_T" + std::to_string(tempId);
+	tempId++;
+	return newTemp;
+}
 
 void Parser::emit(const string& op, const string& arg1, const string& arg2, const string& result) {
 	Quaternion q = Quaternion(op, arg1, arg2, result);
@@ -95,7 +111,16 @@ bool Parser::parse(const vector<string>& str) {
 	while (1) {
 		int s = states.top();
 		string symbol = str[p];
-		Action action = LRTable.getAction(s, symbol);
+		Action action;
+		if (isNumber(symbol)) { // 判断symbol是否为数字
+			symbolTabel.getAttribute("Number").place = symbol;
+			action = LRTable.getAction(s, string("Number"));
+		}
+		else if (isBool(symbol)) { // 判断symbol是否为布尔型
+			symbolTabel.getAttribute("Bool").place = symbol;
+			action = LRTable.getAction(s, string("Bool"));
+		}
+		else action = LRTable.getAction(s, symbol);
 
 		switch (action.act)
 		{
@@ -115,9 +140,16 @@ bool Parser::parse(const vector<string>& str) {
 					states.pop();
 					symbols.pop();
 				}
-				states.push( LRTable.getGoto(states.top(), grammer.left).state );
-				symbols.push(grammer.left);
-				break;
+				int nextState = LRTable.getGoto(states.top(), grammer.left).state;
+				if (nextState < 0) { // 规约状态不存在, 出错
+					fail = true;
+					break;
+				}
+				else {
+					states.push(nextState);
+					symbols.push(grammer.left);
+					break;
+				}
 			}
 
 			case Act::Acc: { // 接受

@@ -44,10 +44,10 @@ public:
 	int falseList;
 	int nextList;
 	int quad;
-	double place;
+	string place;
 	string op;
 
-	Attribute() : type(""), trueList(-1), falseList(-1), nextList(-1), quad(-1), place(0), op("") { }
+	Attribute() : type(""), trueList(-1), falseList(-1), nextList(-1), quad(-1), place(""), op("") { }
 };
 
 

@@ -19,21 +19,15 @@ public:
 	vector<string> actionSymbols;
 	vector<string> gotoSymbols;
 
+	LRAnalysisTable();
+
 	Action getAction(const int& state, const string& symbol);
 	Goto getGoto(const int& state, const string& symbol);
 };
 
 Action LRAnalysisTable::getAction(const int& state, const string& symbol) {
 	int i;
-	if (isNumber(symbol)) { // 判断symbol是否为数字
-		i = indexOf(actionSymbols, string("Number"));
-	}
-	else if (isBool(symbol)) { // 判断symbol是否为布尔型
-		i = indexOf(actionSymbols, string("Bool"));
-	}
-	else { // 其他符号
-		i = indexOf(actionSymbols, split(symbol, string("_"))[0]); // 用 _ 分割, 支持脚标
-	}
+	i = indexOf(actionSymbols, split(symbol, string("_"))[0]); // 用 _ 分割, 支持脚标
 	if (i != -1) {
 		return table[state].actions[i];
 	}
