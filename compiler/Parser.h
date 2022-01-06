@@ -133,6 +133,12 @@ bool Parser::parse(const vector<string>& str) {
 			terminal.type = string("Variable");
 			action = LRTable.getAction(s, string("id"));
 		}
+		else if (ifRelop(symbol)) {
+			Attribute& terminal = symbolTabel.getAttribute("relop");
+			terminal.op = symbol;
+			terminal.type = string("Relop");
+			action = LRTable.getAction(s, string("relop"));
+		}
 		else action = LRTable.getAction(s, symbol); // Æ¥ÅäÆäËû¹Ø¼ü×Ö
 
 		switch (action.act)

@@ -84,6 +84,13 @@ bool ifVariable(const string& str) {
 	return std::regex_match(str, r);
 }
 
+// 判断字符串是否为relop
+bool ifRelop(const string& str) {
+	if (str == "<" || str == ">" || str == "<=" || str == ">=" || str == "==")
+		return true;
+	else return false;
+}
+
 // 字符串转换为数字类型
 double str2Number(const string& str) {
 	std::istringstream sin(str);
