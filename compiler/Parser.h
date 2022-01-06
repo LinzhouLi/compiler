@@ -4,6 +4,7 @@
 #include <stack>
 #include <string>
 #include <iostream>
+#include <iomanip>
 #include "Global.h"
 #include "LRAnalysisTable.h"
 #include "SymbolTable.h"
@@ -11,6 +12,7 @@
 
 using std::vector;
 using std::stack;
+using std::setw;
 
 class Parser;
 
@@ -18,10 +20,10 @@ class AttGrammer { // 属性文法
 public:
 	string left;
 	vector<string> right;
-	void (*function)(Parser* parser); // 语义动作 (函数指针)
+	bool (*function)(Parser* parser); // 语义动作 (函数指针)
 
 	AttGrammer() : function(nullptr) { }
-	AttGrammer(const string& _left, const vector<string>& _right, void (*f)(Parser* parser) = nullptr) : left(_left), right(_right), function(f) { }
+	AttGrammer(const string& _left, const vector<string>& _right, bool (*f)(Parser* parser) = nullptr) : left(_left), right(_right), function(f) { }
 };
 
 class Parser {
@@ -32,7 +34,7 @@ private:
 	stack<int> states; // 状态栈
 	stack<string> symbols; // 符号栈
 
-	int tempId;
+	int tempId, terminalId;
 
 public:
 	int nextQuad; // 下一条四元式的标号
@@ -55,10 +57,11 @@ public:
 Parser::Parser() {
 	nextQuad = 0;
 	tempId = 0;
+	terminalId = 0;
 }
 
 string Parser::getNewTemp() {
-	string newTemp = "_T" + std::to_string(tempId);
+	string newTemp = "T" + std::to_string(tempId);
 	tempId++;
 	return newTemp;
 }
@@ -113,14 +116,24 @@ bool Parser::parse(const vector<string>& str) {
 		string symbol = str[p];
 		Action action;
 		if (isNumber(symbol)) { // 判断symbol是否为数字
-			symbolTabel.getAttribute("Number").place = symbol;
-			action = LRTable.getAction(s, string("Number"));
+			Attribute& terminal = symbolTabel.getAttribute("id");
+			terminal.place = symbol;
+			terminal.type = string("Number");
+			action = LRTable.getAction(s, string("id"));
 		}
 		else if (isBool(symbol)) { // 判断symbol是否为布尔型
-			symbolTabel.getAttribute("Bool").place = symbol;
-			action = LRTable.getAction(s, string("Bool"));
+			Attribute& terminal = symbolTabel.getAttribute("id");
+			terminal.place = symbol;
+			terminal.type = string("Bool");
+			action = LRTable.getAction(s, string("id"));
 		}
-		else action = LRTable.getAction(s, symbol);
+		else if (ifVariable(symbol)) { // 判断symbol是否为合法变量
+			Attribute& terminal = symbolTabel.getAttribute("id");
+			terminal.place = symbol;
+			terminal.type = string("Variable");
+			action = LRTable.getAction(s, string("id"));
+		}
+		else action = LRTable.getAction(s, symbol); // 匹配其他关键字
 
 		switch (action.act)
 		{
@@ -134,7 +147,8 @@ bool Parser::parse(const vector<string>& str) {
 			case Act::Reduce: { // 规约
 				AttGrammer grammer = attGrammers[action.state - 1]; // 对应属性文法
 				if (grammer.function) {
-					grammer.function(this); // 执行对应语义动作
+					if (grammer.function(this)) { } // 执行对应语义动作
+					else fail = true;
 				}
 				for (int i = 0; i < grammer.right.size(); i++) {
 					states.pop();
@@ -175,6 +189,6 @@ bool Parser::parse(const vector<string>& str) {
 
 void Parser::print() {
 	for (auto quaternion : quaternions) {
-		std::cout << quaternion.op << "  " << quaternion.arg1 << "  " << quaternion.arg2 << "  " << quaternion.result << std::endl;
+		std::cout << quaternion.op << setw(10) << quaternion.arg1 << setw(10) << quaternion.arg2 << setw(5) << quaternion.result << std::endl;
 	}
 }

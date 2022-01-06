@@ -3,6 +3,7 @@
 #include <vector>
 #include <string>
 #include <sstream>
+#include <regex>
 
 using std::string;
 using std::vector;
@@ -75,6 +76,12 @@ bool isNumber(const string& str) {
 // 判断字符串是否为布尔型
 bool isBool(const string& str) {
 	return str == string("true") || str == string("false");
+}
+
+// 判断字符串是否为合法变量
+bool ifVariable(const string& str) {
+	std::regex r("^/w+$");
+	return std::regex_match(str, r);
 }
 
 // 字符串转换为数字类型
