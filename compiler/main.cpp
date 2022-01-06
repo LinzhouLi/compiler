@@ -1,55 +1,80 @@
 #include "Parser.h"
 #include "LRAnalysisTable.h"
 
-void attGrammer1func(Parser* parser) { // E->E+T
-	Attribute& attributeOfE = parser->symbolTabel.getAttribute("E"); // 得到E的所有属性
-	Attribute& attributeOfT = parser->symbolTabel.getAttribute("T"); // 得到T的所有属性
+int Eid = 0;
+int Fid = 0;
+int Tid = 0;
+
+string E() {
+	return "E_" + std::to_string(Eid);
+}
+
+string F() {
+	return "F_" + std::to_string(Fid);
+}
+
+string T() {
+	return "T_" + std::to_string(Tid);
+}
+
+bool attGrammer1func(Parser* parser) { // E->E+T
+	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
+	Tid--;
 	string newTemp = parser->getNewTemp();
 	parser->emit("+", attributeOfE.place, attributeOfT.place, newTemp);
 	attributeOfE.place = newTemp;// E.place := newtemp;
-	return;
+	return true;
 }
 
-void attGrammer2func(Parser* parser) { // E->T
-	Attribute& attributeOfE = parser->symbolTabel.getAttribute("E"); // 得到E的所有属性
-	Attribute& attributeOfT = parser->symbolTabel.getAttribute("T"); // 得到T的所有属性
+bool attGrammer2func(Parser* parser) { // E->T
+	Eid++;
+	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
+	Tid--;
 	attributeOfE.place = attributeOfT.place;
-	return;
+	return true;
 }
 
-void attGrammer3func(Parser* parser) { // T->T*F
-	Attribute& attributeOfT = parser->symbolTabel.getAttribute("T"); // 得到T的所有属性
-	Attribute& attributeOfF = parser->symbolTabel.getAttribute("F"); // 得到F的所有属性
+bool attGrammer3func(Parser* parser) { // T->T*F
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
+	Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
+	Fid--;
 	string newTemp = parser->getNewTemp();
 	parser->emit("*", attributeOfT.place, attributeOfF.place, newTemp);
 	attributeOfT.place = newTemp;// T.place := newtemp;
-	return;
+	return true;
 }
 
-void attGrammer4func(Parser* parser) { // E->T
-	Attribute& attributeOfT = parser->symbolTabel.getAttribute("T"); // 得到T的所有属性
-	Attribute& attributeOfF = parser->symbolTabel.getAttribute("F"); // 得到F的所有属性
+bool attGrammer4func(Parser* parser) { // T->F
+	Tid++;
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
+	Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
+	Fid--;
 	attributeOfT.place = attributeOfF.place;
-	return;
+	return true;
 }
 
-void attGrammer5func(Parser* parser) { // T->(E)
-	Attribute& attributeOfT = parser->symbolTabel.getAttribute("T"); // 得到T的所有属性
-	Attribute& attributeOfE = parser->symbolTabel.getAttribute("E"); // 得到E的所有属性
+bool attGrammer5func(Parser* parser) { // F->(E)
+	Fid++;
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(F()); // 得到T的所有属性
+	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
+	Eid--;
 	attributeOfT.place = attributeOfE.place;
-	return;
+	return true;
 }
 
-void attGrammer6func(Parser* parser) { // F->Number
-	Attribute& attributeOfF = parser->symbolTabel.getAttribute("F"); // 得到F的所有属性
-	Attribute& attributeOfNumber = parser->symbolTabel.getAttribute("Number"); // 得到Number的所有属性
-	attributeOfF.place = attributeOfNumber.place;
-	return;
+bool attGrammer6func(Parser* parser) { // F->id
+	Fid++;
+	Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
+	Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
+	attributeOfF.place = attributeOfId.place;
+	return true;
 }
 
 LRAnalysisTable::LRAnalysisTable() {
 	// 初始化LR分析表
-	actionSymbols.push_back("Number");
+	actionSymbols.push_back("id");
 	actionSymbols.push_back("+");
 	actionSymbols.push_back("*");
 	actionSymbols.push_back("(");
@@ -240,7 +265,7 @@ int main() {
 	attGrammer4.function = attGrammer4func;
 	parser.attGrammers.push_back(attGrammer4);
 
-	// T->(E)
+	// F->(E)
 	AttGrammer attGrammer5;
 	attGrammer5.left = "F";
 	attGrammer5.right.push_back("(");
@@ -252,16 +277,18 @@ int main() {
 	// F->Number
 	AttGrammer attGrammer6;
 	attGrammer6.left = "F";
-	attGrammer6.right.push_back("Number");
+	attGrammer6.right.push_back("id");
 	attGrammer6.function = attGrammer6func;
 	parser.attGrammers.push_back(attGrammer6);
 
 	vector<string> str;
 	str.push_back("123");
 	str.push_back("*");
+	str.push_back("(");
 	str.push_back("-345");
 	str.push_back("+");
 	str.push_back("457.22");
+	str.push_back(")");
 	str.push_back("#");
 
 	parser.init(); // 初始化一下
