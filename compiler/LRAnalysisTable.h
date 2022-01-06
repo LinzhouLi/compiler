@@ -2,10 +2,11 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
+#include <sstream>
 #include "Global.h"
 
-using std::vector;
-using std::string;
+using namespace std;
 
 class State {
 public:
@@ -44,4 +45,63 @@ Goto LRAnalysisTable::getGoto(const int& state, const string& symbol) {
 	else {
 		return Goto();
 	}
+}
+
+LRAnalysisTable::LRAnalysisTable() {
+	int actionSymbolNum = 6;
+	int gotoSymbolNum = 3;
+
+	string lineStr, str;
+	fstream LRFile("LRAnalysisTable.csv");
+	if (!LRFile.is_open()) cout << "LR分析表文件打开失败!" << endl;
+
+	// 第一行是action和goto的symbol
+	getline(LRFile, lineStr);
+	stringstream ss(lineStr);
+	int symbolNum = 0;
+	while (getline(ss, str, ',')) {
+		if (symbolNum < actionSymbolNum)
+			actionSymbols.push_back(str);
+		else if (symbolNum < actionSymbolNum + gotoSymbolNum)
+			gotoSymbols.push_back(str);
+		else cout << "LR分析表符号数量过多!" << endl;
+		symbolNum++;
+	}
+
+	// 剩下的是状态
+	string flag;
+	int toState;
+	while (getline(LRFile, lineStr)) {
+		stringstream ss(lineStr);
+		int symbolNum = 0;
+		State state;
+		while (getline(ss, str, ',')) {
+			if (symbolNum < actionSymbolNum) { // Action
+				if (str == "") {
+					state.actions.push_back(Action(Act::Fail));
+				}
+				else if (str == "acc") {
+					state.actions.push_back(Action(Act::Acc));
+				}
+				else {
+					flag = split(str, "_")[0];
+					toState = str2Number(split(str, "_")[1]);
+					if (flag == "s")
+						state.actions.push_back(Action(Act::Shift, toState));
+					else if (flag == "r")
+						state.actions.push_back(Action(Act::Reduce, toState));
+				}
+			}
+			else if (symbolNum < actionSymbolNum + gotoSymbolNum) {
+				if (str == "")
+					state.gotos.push_back(Goto());
+				else
+					state.gotos.push_back(Goto(str2Number(str)));
+			}
+			else cout << "LR分析表符号数量过多!" << endl;
+			symbolNum++;
+		}
+		table.push_back(state);
+	}
+	LRFile.close();
 }

@@ -1,5 +1,7 @@
+
 #include "Parser.h"
 #include "LRAnalysisTable.h"
+
 
 int Eid = 0;
 int Fid = 0;
@@ -72,165 +74,8 @@ bool attGrammer6func(Parser* parser) { // F->id
 	return true;
 }
 
-LRAnalysisTable::LRAnalysisTable() {
-	// 初始化LR分析表
-	actionSymbols.push_back("id");
-	actionSymbols.push_back("+");
-	actionSymbols.push_back("*");
-	actionSymbols.push_back("(");
-	actionSymbols.push_back(")");
-	actionSymbols.push_back("#");
-
-	gotoSymbols.push_back("E");
-	gotoSymbols.push_back("T");
-	gotoSymbols.push_back("F");
-
-	State state0;
-	state0.actions.push_back(Action(Act::Shift, 5));
-	state0.actions.push_back(Action(Act::Fail));
-	state0.actions.push_back(Action(Act::Fail));
-	state0.actions.push_back(Action(Act::Shift, 4));
-	state0.actions.push_back(Action(Act::Fail));
-	state0.actions.push_back(Action(Act::Fail));
-	state0.gotos.push_back(Goto(1));
-	state0.gotos.push_back(Goto(2));
-	state0.gotos.push_back(Goto(3));
-	table.push_back(state0);
-
-	State state1;
-	state1.actions.push_back(Action(Act::Fail));
-	state1.actions.push_back(Action(Act::Shift, 6));
-	state1.actions.push_back(Action(Act::Fail));
-	state1.actions.push_back(Action(Act::Fail));
-	state1.actions.push_back(Action(Act::Fail));
-	state1.actions.push_back(Action(Act::Acc));
-	state1.gotos.push_back(Goto());
-	state1.gotos.push_back(Goto());
-	state1.gotos.push_back(Goto());
-	table.push_back(state1);
-
-	State state2;
-	state2.actions.push_back(Action(Act::Fail));
-	state2.actions.push_back(Action(Act::Reduce, 2));
-	state2.actions.push_back(Action(Act::Shift, 7));
-	state2.actions.push_back(Action(Act::Fail));
-	state2.actions.push_back(Action(Act::Reduce, 2));
-	state2.actions.push_back(Action(Act::Reduce, 2));
-	state2.gotos.push_back(Goto());
-	state2.gotos.push_back(Goto());
-	state2.gotos.push_back(Goto());
-	table.push_back(state2);
-
-	State state3;
-	state3.actions.push_back(Action(Act::Fail));
-	state3.actions.push_back(Action(Act::Reduce, 4));
-	state3.actions.push_back(Action(Act::Reduce, 4));
-	state3.actions.push_back(Action(Act::Fail));
-	state3.actions.push_back(Action(Act::Reduce, 4));
-	state3.actions.push_back(Action(Act::Reduce, 4));
-	state3.gotos.push_back(Goto());
-	state3.gotos.push_back(Goto());
-	state3.gotos.push_back(Goto());
-	table.push_back(state3);
-
-	State state4;
-	state4.actions.push_back(Action(Act::Shift, 5));
-	state4.actions.push_back(Action(Act::Fail));
-	state4.actions.push_back(Action(Act::Fail));
-	state4.actions.push_back(Action(Act::Shift, 4));
-	state4.actions.push_back(Action(Act::Fail));
-	state4.actions.push_back(Action(Act::Fail));
-	state4.gotos.push_back(Goto(8));
-	state4.gotos.push_back(Goto(2));
-	state4.gotos.push_back(Goto(3));
-	table.push_back(state4);
-
-	State state5;
-	state5.actions.push_back(Action(Act::Fail));
-	state5.actions.push_back(Action(Act::Reduce, 6));
-	state5.actions.push_back(Action(Act::Reduce, 6));
-	state5.actions.push_back(Action(Act::Fail));
-	state5.actions.push_back(Action(Act::Reduce, 6));
-	state5.actions.push_back(Action(Act::Reduce, 6));
-	state5.gotos.push_back(Goto());
-	state5.gotos.push_back(Goto());
-	state5.gotos.push_back(Goto());
-	table.push_back(state5);
-
-	State state6;
-	state6.actions.push_back(Action(Act::Shift, 5));
-	state6.actions.push_back(Action(Act::Fail));
-	state6.actions.push_back(Action(Act::Fail));
-	state6.actions.push_back(Action(Act::Shift, 4));
-	state6.actions.push_back(Action(Act::Fail));
-	state6.actions.push_back(Action(Act::Fail));
-	state6.gotos.push_back(Goto());
-	state6.gotos.push_back(Goto(9));
-	state6.gotos.push_back(Goto(3));
-	table.push_back(state6);
-
-	State state7;
-	state7.actions.push_back(Action(Act::Shift, 5));
-	state7.actions.push_back(Action(Act::Fail));
-	state7.actions.push_back(Action(Act::Fail));
-	state7.actions.push_back(Action(Act::Shift, 4));
-	state7.actions.push_back(Action(Act::Fail));
-	state7.actions.push_back(Action(Act::Fail));
-	state7.gotos.push_back(Goto());
-	state7.gotos.push_back(Goto());
-	state7.gotos.push_back(Goto(10));
-	table.push_back(state7);
-
-	State state8;
-	state8.actions.push_back(Action(Act::Fail));
-	state8.actions.push_back(Action(Act::Shift, 6));
-	state8.actions.push_back(Action(Act::Fail));
-	state8.actions.push_back(Action(Act::Fail));
-	state8.actions.push_back(Action(Act::Shift, 11));
-	state8.actions.push_back(Action(Act::Fail));
-	state8.gotos.push_back(Goto());
-	state8.gotos.push_back(Goto());
-	state8.gotos.push_back(Goto());
-	table.push_back(state8);
-
-	State state9;
-	state9.actions.push_back(Action(Act::Fail));
-	state9.actions.push_back(Action(Act::Reduce, 1));
-	state9.actions.push_back(Action(Act::Shift, 7));
-	state9.actions.push_back(Action(Act::Fail));
-	state9.actions.push_back(Action(Act::Reduce, 1));
-	state9.actions.push_back(Action(Act::Reduce, 1));
-	state9.gotos.push_back(Goto());
-	state9.gotos.push_back(Goto());
-	state9.gotos.push_back(Goto());
-	table.push_back(state9);
-
-	State state10;
-	state10.actions.push_back(Action(Act::Fail));
-	state10.actions.push_back(Action(Act::Reduce, 3));
-	state10.actions.push_back(Action(Act::Reduce, 3));
-	state10.actions.push_back(Action(Act::Fail));
-	state10.actions.push_back(Action(Act::Reduce, 3));
-	state10.actions.push_back(Action(Act::Reduce, 3));
-	state10.gotos.push_back(Goto());
-	state10.gotos.push_back(Goto());
-	state10.gotos.push_back(Goto());
-	table.push_back(state10);
-
-	State state11;
-	state11.actions.push_back(Action(Act::Fail));
-	state11.actions.push_back(Action(Act::Reduce, 5));
-	state11.actions.push_back(Action(Act::Reduce, 5));
-	state11.actions.push_back(Action(Act::Fail));
-	state11.actions.push_back(Action(Act::Reduce, 5));
-	state11.actions.push_back(Action(Act::Reduce, 5));
-	state11.gotos.push_back(Goto());
-	state11.gotos.push_back(Goto());
-	state11.gotos.push_back(Goto());
-	table.push_back(state11);
-}
-
 int main() {
+	
 	Parser parser;
 
 	// E->E+T
@@ -295,4 +140,5 @@ int main() {
 	if (parser.parse(str)) parser.print();
 	else std::cout << "语法出错!" << std::endl;
 	return 0;
+	
 }
