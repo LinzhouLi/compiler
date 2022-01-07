@@ -48,8 +48,8 @@ Goto LRAnalysisTable::getGoto(const int& state, const string& symbol) {
 }
 
 LRAnalysisTable::LRAnalysisTable() {
-	int actionSymbolNum = 6;
-	int gotoSymbolNum = 3;
+	int actionSymbolNum = 0;
+	int gotoSymbolNum = 0;
 
 	string lineStr, str;
 	fstream LRFile("LRAnalysisTable.csv");
@@ -58,14 +58,17 @@ LRAnalysisTable::LRAnalysisTable() {
 	// 第一行是action和goto的symbol
 	getline(LRFile, lineStr);
 	stringstream ss(lineStr);
-	int symbolNum = 0;
+	bool gotoFlag = false;
 	while (getline(ss, str, ',')) {
-		if (symbolNum < actionSymbolNum)
+		if (ifCapital(str)) gotoFlag = true; // 从大写字母开始, 认定为非终结符
+		if (!gotoFlag) { // ActionSymbol
 			actionSymbols.push_back(str);
-		else if (symbolNum < actionSymbolNum + gotoSymbolNum)
+			actionSymbolNum++;
+		}
+		else { // GotoSymbol
 			gotoSymbols.push_back(str);
-		else cout << "LR分析表符号数量过多!" << endl;
-		symbolNum++;
+			gotoSymbolNum++;
+		}
 	}
 
 	// 剩下的是状态

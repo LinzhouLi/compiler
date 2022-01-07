@@ -151,7 +151,7 @@ bool Parser::parse(const vector<string>& str) {
 			}
 
 			case Act::Reduce: { // 规约
-				AttGrammer grammer = attGrammers[action.state - 1]; // 对应属性文法
+				AttGrammer grammer = attGrammers[action.state]; // 对应属性文法
 				if (grammer.function) {
 					if (grammer.function(this)) { } // 执行对应语义动作
 					else fail = true;
@@ -195,6 +195,6 @@ bool Parser::parse(const vector<string>& str) {
 
 void Parser::print() {
 	for (auto quaternion : quaternions) {
-		std::cout << quaternion.op << setw(10) << quaternion.arg1 << setw(10) << quaternion.arg2 << setw(5) << quaternion.result << std::endl;
+		std::cout << setw(4) << quaternion.op << setw(10) << quaternion.arg1 << setw(10) << quaternion.arg2 << setw(5) << quaternion.result << std::endl;
 	}
 }

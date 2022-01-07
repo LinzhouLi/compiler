@@ -80,7 +80,13 @@ bool isBool(const string& str) {
 
 // 判断字符串是否为合法变量
 bool ifVariable(const string& str) {
-	std::regex r("^/w+$");
+	std::regex r("^\\w+$");
+	return std::regex_match(str, r);
+}
+
+// 判断字符串是否为大写字母
+bool ifCapital(const string& str) {
+	std::regex r("^[A-Z]$");
 	return std::regex_match(str, r);
 }
 
