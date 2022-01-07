@@ -121,7 +121,6 @@ bool attGrammer10func(Parser* parser) {
 
 // G->id
 bool attGrammer11func(Parser* parser) {
-	Fid++;
 	Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到F的所有属性
 	Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
 	if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
@@ -225,11 +224,15 @@ int main() {
 	vector<string> str;
 	str.push_back("a");
 	str.push_back("=");
-	str.push_back("123");
-	str.push_back("+");
-	str.push_back("-345");
+	str.push_back("1.3");
 	str.push_back("*");
-	str.push_back("457.22");
+	str.push_back("(");
+	str.push_back("-2.2");
+	str.push_back("+");
+	str.push_back("3");
+	str.push_back("/");
+	str.push_back("5");
+	str.push_back(")");
 	str.push_back("#");
 
 	parser.init(); // 初始化一下
