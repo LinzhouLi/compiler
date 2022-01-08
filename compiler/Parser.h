@@ -30,13 +30,13 @@ class Parser {
 private:
 	LRAnalysisTable LRTable; // LR分析表
 	vector<Quaternion> quaternions; // 四元式
-
 	stack<int> states; // 状态栈
 	stack<string> symbols; // 符号栈
 
 	int tempId, terminalId;
 
 public:
+
 	int nextQuad; // 下一条四元式的标号
 	vector<AttGrammer> attGrammers; // 属性文法
 	SymbolTable symbolTabel; // 符号表
@@ -51,6 +51,7 @@ public:
 	int merge(const int& p1, const int& p2);
 	void backPatch(const int& p, const int& t);
 	void print();
+	void print_line(int line);
 	string getNewTemp();
 };
 
@@ -127,6 +128,16 @@ bool Parser::parse(const vector<string>& str) {
 			terminal.type = string("Bool");
 			action = LRTable.getAction(s, string("id"));
 		}
+		else if (ifgoto(symbol)) {
+			Attribute& terminal = symbolTabel.getAttribute("goto");
+			terminal.place = symbol;
+			terminal.type = string("goto");
+			action = Act::Acc;
+			p++;
+			Quaternion q = Quaternion("j", "-", "-", str[p]);
+			quaternions.push_back(q);
+			
+		}
 		else if (ifVariable(symbol)) { // 判断symbol是否为合法变量
 			Attribute& terminal = symbolTabel.getAttribute("id");
 			terminal.place = symbol;
@@ -197,4 +208,10 @@ void Parser::print() {
 	for (auto quaternion : quaternions) {
 		std::cout << setw(4) << quaternion.op << setw(10) << quaternion.arg1 << setw(10) << quaternion.arg2 << setw(5) << quaternion.result << std::endl;
 	}
+}
+//        打印goto到的那一行
+void Parser::print_line(int line) {
+	
+	std::cout << setw(4) << quaternions[line].op << setw(10) << quaternions[line].arg1 << setw(10) << quaternions[line].arg2 << setw(5) << quaternions[line].result << std::endl;
+	
 }

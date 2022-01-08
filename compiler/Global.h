@@ -96,7 +96,15 @@ bool ifRelop(const string& str) {
 		return true;
 	else return false;
 }
-
+// 判断字符串是否为goto
+bool ifgoto(const string& str) {
+	if (str == "goto") {
+		return true;
+	}
+	else {
+		return false;
+	}
+}
 // 字符串转换为数字类型
 double str2Number(const string& str) {
 	std::istringstream sin(str);
