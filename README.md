@@ -353,8 +353,8 @@ a = 1.3 * ( -2.2 + 3 / 5 ) #
 6. $$G\rightarrow id $$
 
 ### DFA
+<img src="img/编原 (3).png">
 
-![编原 (3)](C:\Users\86187\Downloads\编原 (3).png)
 
 ### LR分析表
 
@@ -444,7 +444,7 @@ bool attGrammer4func(Parser* parser) {
 if a>0 then b=0 else =1
 ```
 
-输出结果：![结果](C:\Users\86187\Desktop\semester\编原\结果.png)
+输出结果：<img src="img/结果.png">
 
 
 ## 循环语句
