@@ -342,126 +342,109 @@ a = 1.3 * ( -2.2 + 3 / 5 ) #
 ## 布尔表达式
 
 ## 条件语句
-### 产生式
+### 
 
-0. $$S'\rightarrow S   $$
-
-1. $$S\rightarrow G=E $$
-
-2. $$E\rightarrow E+T $$
-
-3. $$E\rightarrow E-T  $$
-
-4. $$E\rightarrow T   $$
-
-5. $$T\rightarrow T*F  $$
-
-6. $$T\rightarrow T/F  $$
-
-7. $$T\rightarrow F   $$
-
-8. $$F\rightarrow (E)  $$
-
-9. $$F\rightarrow id  $$
-
-10. $$G\rightarrow id $$
+0. $$E'\rightarrow E   $$
+1. $$E\rightarrow if\ T\ then\ H $$
+2. $$E\rightarrow if\ T\ then\ H_1\ else \ H_2$$
+3. $$T\rightarrow F_1\ relop\ F_2  $$
+4. $$F\rightarrow id   $$
+5. $$H\rightarrow G=F  $$
+6. $$G\rightarrow id $$
 
 ### DFA
 
-<img src="img/赋值语句DFA.png">
+![编原 (3)](C:\Users\86187\Downloads\编原 (3).png)
 
 ### LR分析表
 
-|      | #    | （   | ）   | *    | +    | -    | /    | =    | id   | E    | F    | G    | S    | T    |
-| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
-| 0    |      |      |      |      |      |      |      |      | s3   |      |      | 2    | 1    |      |
-| 1    | acc  |      |      |      |      |      |      |      |      |      |      |      |      |      |
-| 2    |      |      |      |      |      |      |      | s4   |      |      |      |      |      |      |
-| 3    |      |      |      |      |      |      |      | r10  |      |      |      |      |      |      |
-| 4    |      | s8   |      |      |      |      |      |      | s9   | 5    | 7    |      |      | 6    |
-| 5    | r1   |      |      |      | s10  | s11  |      |      |      |      |      |      |      |      |
-| 6    | r4   |      | r4   | s12  | r4   | r4   | s13  |      |      |      |      |      |      |      |
-| 7    | r7   |      | r7   | r7   | r7   | r7   | r7   |      |      |      |      |      |      |      |
-| 8    |      | s8   |      |      |      |      |      |      | s9   | 14   | 7    |      |      | 6    |
-| 9    | r9   |      | r9   | r9   | r9   | r9   | r9   |      |      |      |      |      |      |      |
-| 10   |      | s8   |      |      |      |      |      |      | s9   |      | 7    |      |      | 15   |
-| 11   |      | s8   |      |      |      |      |      |      | s9   |      | 7    |      |      | 16   |
-| 12   |      | s8   |      |      |      |      |      |      | s9   |      | 17   |      |      |      |
-| 13   |      | s8   |      |      |      |      |      |      | s9   |      | 18   |      |      |      |
-| 14   |      |      | s19  |      | s10  | s11  |      |      |      |      |      |      |      |      |
-| 15   | r2   |      | r2   | s12  | r2   | r2   | s13  |      |      |      |      |      |      |      |
-| 16   | r3   |      | r3   | s12  | r3   | r3   | s13  |      |      |      |      |      |      |      |
-| 17   | r5   |      | r5   | r5   | r5   | r5   | r5   |      |      |      |      |      |      |      |
-| 18   | r6   |      | r6   | r6   | r6   | r6   | r6   |      |      |      |      |      |      |      |
-| 19   | r8   |      | r8   | r8   | r8   | r8   | r8   |      |      |      |      |      |      |      |
+|      | #    | if   | then | else | relop | id   | =    | E    | T    | F    | H    | G    |
+| ---- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| 0    |      | s_2  |      |      |       |      |      | 1    |      |      |      |      |
+| 1    | acc  |      |      |      |       |      |      |      |      |      |      |      |
+| 2    |      |      |      |      |       | s_3  |      |      | 5    | 6    |      |      |
+| 3    |      |      |      |      | r_4   |      |      |      |      |      |      |      |
+| 4    |      |      | r_4  |      |       |      |      |      |      |      |      |      |
+| 5    |      |      | s_9  |      |       |      |      |      |      |      |      |      |
+| 6    |      |      |      |      | s_7   |      |      |      |      |      |      |      |
+| 7    |      |      |      |      |       | s_4  |      |      |      | 8    |      |      |
+| 8    |      |      | r_3  |      |       |      |      |      |      |      |      |      |
+| 9    |      |      |      |      |       | s_21 |      |      |      |      | 10   | 17   |
+| 10   | r_1  |      |      | s_11 |       |      |      |      |      |      |      |      |
+| 11   |      |      |      |      |       | s_21 |      |      |      |      | 12   | 13   |
+| 12   | r_2  |      |      |      |       |      |      |      |      |      |      |      |
+| 13   |      |      |      |      |       |      | s_14 |      |      |      |      |      |
+| 14   |      |      |      |      |       | s_16 |      |      |      | 15   |      |      |
+| 15   | r_5  |      |      |      |       |      |      |      |      |      |      | 23   |
+| 16   | r_4  |      |      |      |       |      |      |      |      |      |      |      |
+| 17   |      |      |      |      |       |      | s_18 |      |      |      |      |      |
+| 18   |      |      |      |      |       | s_19 |      |      |      | 20   |      |      |
+| 19   | r_4  |      |      | r_4  |       |      |      |      |      |      |      |      |
+| 20   | r_5  |      |      | r_5  |       |      |      |      |      |      |      |      |
+| 21   |      |      |      |      |       |      | r_6  |      |      |      |      |      |
 
-### 部分产生式语义动作
+部分产生式语义动作
 
-$$S\rightarrow G=E$$
-
-```c++
-bool attGrammer2func(Parser* parser) { 
-	Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到T的所有属性
-	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-	Eid--;
-	parser->emit(":=", attributeOfE.place, " ", attributeOfG.place);
-	return true;
-}
-```
-
-$$E\rightarrow E+T$$
+$$E\rightarrow if\ T\ then\ H_1\ else \ H_2$$
 
 ```c++
 bool attGrammer3func(Parser* parser) { 
+	Attribute& attributeOfM2 = parser->symbolTabel.getAttribute(M());
+	Mid--;
+	Attribute& attributeOfM1 = parser->symbolTabel.getAttribute(M());
+	Mid--;
+	Eid++;
 	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
 	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
 	Tid--;
-	string newTemp = parser->getNewTemp();
-	parser->emit("+", attributeOfE.place, attributeOfT.place, newTemp);
-	attributeOfE.place = newTemp;// E.place := newtemp;
+	Attribute& attributeOfH2 = parser->symbolTabel.getAttribute(H()); // 得到E的所有属性
+	Hid--;
+	Attribute& attributeOfH1 = parser->symbolTabel.getAttribute(H()); // 得到E的所有属性
+	Hid--;
+	parser->backPatch(attributeOfT.trueList, attributeOfM1.quad);
+	parser->backPatch(attributeOfT.falseList, attributeOfM2.quad);
+	std:cout << "test:" << attributeOfH1.nextList << endl;
+	Nid--;
+	Attribute& attributeOfN = parser->symbolTabel.getAttribute(N()); // 得到N的所有属性
+	Nid--;
+	attributeOfE.nextList = attributeOfN.nextList;
+	parser->pop();
+	parser->backPatch(attributeOfE.nextList, parser->nextQuad);
 	return true;
 }
 ```
 
-$$ T\rightarrow T/F$$
+$$T\rightarrow F_1\ relop\ F_2  $$
 
 ```c++
-bool attGrammer7func(Parser* parser) {
+bool attGrammer4func(Parser* parser) { 
+	Tid++;
 	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-	Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
-	if (attributeOfF.place == "0")  // 直接除以0错误
-		return false;
+	Attribute& attributeOfRelop = parser->symbolTabel.getAttribute("relop"); // 得到Relop的所有属性
+	Attribute& attributeOfF2 = parser->symbolTabel.getAttribute(F()); // 得到E的所有属性
 	Fid--;
-	string newTemp = parser->getNewTemp();
-	parser->emit("/", attributeOfT.place, attributeOfF.place, newTemp);
-	attributeOfT.place = newTemp;// T.place := newtemp;
+	Attribute& attributeOfF1 = parser->symbolTabel.getAttribute(F()); // 得到T的所有属性
+	Fid--;
+	attributeOfT.trueList = parser->makeList(parser->nextQuad);
+	attributeOfT.falseList = parser->makeList(parser->nextQuad + 1);
+	parser->emit("j" + attributeOfRelop.op, attributeOfF1.place, attributeOfF2.place, "0");
+	parser->emit("j"," "," ","0");
+
 	return true;
 }
 ```
 
-$$ G\rightarrow id$$
 
-```c++
-bool attGrammer11func(Parser* parser) {
-	Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到F的所有属性
-	Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
-	if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
-	attributeOfG.place = attributeOfId.place;
-	return true;
-}
-```
 
 ### 输入输出示例
 
 输入语句：
 
 ```
-a = 1.3 * ( -2.2 + 3 / 5 ) #
+if a>0 then b=0 else =1
 ```
 
-输出结果：
-
-<img src="img\output1.png" width=40%>
+输出结果：![结果](C:\Users\86187\Desktop\semester\编原\结果.png)
 
 
 ## 循环语句
