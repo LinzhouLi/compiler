@@ -8,6 +8,12 @@
 using std::string;
 using std::vector;
 
+const vector<string> keyWords = {
+	"+", "-", "*", "/", "#", "=", "(", ")"
+	"if", "else", "then", "and", "or"
+	"||", "&&", "!"
+};
+
 enum class Act { // Action种类
 	Shift, Reduce, Acc, Fail // 移进, 规约, 接受, 出错
 };
@@ -78,6 +84,14 @@ bool isBool(const string& str) {
 	return str == string("true") || str == string("false");
 }
 
+// 判断字符串是否为关键字
+bool ifKeywords(const string& str) {
+	for (auto s : keyWords) {
+		if (s == str) return true;
+	}
+	return false;
+}
+
 // 判断字符串是否为合法变量
 bool ifVariable(const string& str) {
 	std::regex r("^\\w+$");
@@ -92,7 +106,7 @@ bool ifCapital(const string& str) {
 
 // 判断字符串是否为relop
 bool ifRelop(const string& str) {
-	if (str == "<" || str == ">" || str == "<=" || str == ">=" || str == "==")
+	if (str == "<" || str == ">" || str == "<=" || str == ">=" || str == "==" || str == "!=")
 		return true;
 	else return false;
 }

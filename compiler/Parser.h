@@ -42,6 +42,7 @@ public:
 	SymbolTable symbolTabel; // 符号表
 
 	Parser();
+	Parser(const string& filePath);
 
 	void init();
 	bool parse(const vector<string>& str);
@@ -53,6 +54,12 @@ public:
 	void print();
 	string getNewTemp();
 };
+
+Parser::Parser(const string& filePath) : LRTable(filePath) {
+	nextQuad = 0;
+	tempId = 0;
+	terminalId = 0;
+}
 
 Parser::Parser() {
 	nextQuad = 0;
@@ -73,6 +80,7 @@ void Parser::emit(const string& op, const string& arg1, const string& arg2, cons
 }
 
 int Parser::makeList(const int& i) {
+	quaternions[i].result = "0";
 	return i;
 }
 
@@ -127,13 +135,16 @@ bool Parser::parse(const vector<string>& str) {
 			terminal.type = string("Bool");
 			action = LRTable.getAction(s, string("id"));
 		}
+		else if (ifKeywords(symbol)) { // 判断symbol是否为合法关键字
+			action = LRTable.getAction(s, symbol);
+		}
 		else if (ifVariable(symbol)) { // 判断symbol是否为合法变量
 			Attribute& terminal = symbolTabel.getAttribute("id");
 			terminal.place = symbol;
 			terminal.type = string("Variable");
 			action = LRTable.getAction(s, string("id"));
 		}
-		else if (ifRelop(symbol)) {
+		else if (ifRelop(symbol)) { // 判断symbol是否为合法关系运算符
 			Attribute& terminal = symbolTabel.getAttribute("relop");
 			terminal.op = symbol;
 			terminal.type = string("Relop");

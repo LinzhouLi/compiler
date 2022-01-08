@@ -15,12 +15,15 @@ public:
 };
 
 class LRAnalysisTable {
+private:
+	void openFile(const string& filePath);
 public:
 	vector<State> table;
 	vector<string> actionSymbols;
 	vector<string> gotoSymbols;
 
 	LRAnalysisTable();
+	LRAnalysisTable(const string& filePath);
 
 	Action getAction(const int& state, const string& symbol);
 	Goto getGoto(const int& state, const string& symbol);
@@ -47,12 +50,12 @@ Goto LRAnalysisTable::getGoto(const int& state, const string& symbol) {
 	}
 }
 
-LRAnalysisTable::LRAnalysisTable() {
+void LRAnalysisTable::openFile(const string& filePath) {
 	int actionSymbolNum = 0;
 	int gotoSymbolNum = 0;
 
 	string lineStr, str;
-	fstream LRFile("LRAnalysisTable.csv");
+	fstream LRFile(filePath);
 	if (!LRFile.is_open()) cout << "LR分析表文件打开失败!" << endl;
 
 	// 第一行是action和goto的symbol
@@ -107,4 +110,12 @@ LRAnalysisTable::LRAnalysisTable() {
 		table.push_back(state);
 	}
 	LRFile.close();
+}
+
+LRAnalysisTable::LRAnalysisTable(const string& filePath) {
+	this->openFile(filePath);
+}
+
+LRAnalysisTable::LRAnalysisTable() {
+	this->openFile("LRAnalysisTable.csv");
 }
