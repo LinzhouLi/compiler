@@ -342,6 +342,127 @@ a = 1.3 * ( -2.2 + 3 / 5 ) #
 ## 布尔表达式
 
 ## 条件语句
+### 产生式
+
+0. $$S'\rightarrow S   $$
+
+1. $$S\rightarrow G=E $$
+
+2. $$E\rightarrow E+T $$
+
+3. $$E\rightarrow E-T  $$
+
+4. $$E\rightarrow T   $$
+
+5. $$T\rightarrow T*F  $$
+
+6. $$T\rightarrow T/F  $$
+
+7. $$T\rightarrow F   $$
+
+8. $$F\rightarrow (E)  $$
+
+9. $$F\rightarrow id  $$
+
+10. $$G\rightarrow id $$
+
+### DFA
+
+<img src="img/赋值语句DFA.png">
+
+### LR分析表
+
+|      | #    | （   | ）   | *    | +    | -    | /    | =    | id   | E    | F    | G    | S    | T    |
+| ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| 0    |      |      |      |      |      |      |      |      | s3   |      |      | 2    | 1    |      |
+| 1    | acc  |      |      |      |      |      |      |      |      |      |      |      |      |      |
+| 2    |      |      |      |      |      |      |      | s4   |      |      |      |      |      |      |
+| 3    |      |      |      |      |      |      |      | r10  |      |      |      |      |      |      |
+| 4    |      | s8   |      |      |      |      |      |      | s9   | 5    | 7    |      |      | 6    |
+| 5    | r1   |      |      |      | s10  | s11  |      |      |      |      |      |      |      |      |
+| 6    | r4   |      | r4   | s12  | r4   | r4   | s13  |      |      |      |      |      |      |      |
+| 7    | r7   |      | r7   | r7   | r7   | r7   | r7   |      |      |      |      |      |      |      |
+| 8    |      | s8   |      |      |      |      |      |      | s9   | 14   | 7    |      |      | 6    |
+| 9    | r9   |      | r9   | r9   | r9   | r9   | r9   |      |      |      |      |      |      |      |
+| 10   |      | s8   |      |      |      |      |      |      | s9   |      | 7    |      |      | 15   |
+| 11   |      | s8   |      |      |      |      |      |      | s9   |      | 7    |      |      | 16   |
+| 12   |      | s8   |      |      |      |      |      |      | s9   |      | 17   |      |      |      |
+| 13   |      | s8   |      |      |      |      |      |      | s9   |      | 18   |      |      |      |
+| 14   |      |      | s19  |      | s10  | s11  |      |      |      |      |      |      |      |      |
+| 15   | r2   |      | r2   | s12  | r2   | r2   | s13  |      |      |      |      |      |      |      |
+| 16   | r3   |      | r3   | s12  | r3   | r3   | s13  |      |      |      |      |      |      |      |
+| 17   | r5   |      | r5   | r5   | r5   | r5   | r5   |      |      |      |      |      |      |      |
+| 18   | r6   |      | r6   | r6   | r6   | r6   | r6   |      |      |      |      |      |      |      |
+| 19   | r8   |      | r8   | r8   | r8   | r8   | r8   |      |      |      |      |      |      |      |
+
+### 部分产生式语义动作
+
+$$S\rightarrow G=E$$
+
+```c++
+bool attGrammer2func(Parser* parser) { 
+	Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到T的所有属性
+	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
+	Eid--;
+	parser->emit(":=", attributeOfE.place, " ", attributeOfG.place);
+	return true;
+}
+```
+
+$$E\rightarrow E+T$$
+
+```c++
+bool attGrammer3func(Parser* parser) { 
+	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
+	Tid--;
+	string newTemp = parser->getNewTemp();
+	parser->emit("+", attributeOfE.place, attributeOfT.place, newTemp);
+	attributeOfE.place = newTemp;// E.place := newtemp;
+	return true;
+}
+```
+
+$$ T\rightarrow T/F$$
+
+```c++
+bool attGrammer7func(Parser* parser) {
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
+	Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
+	if (attributeOfF.place == "0")  // 直接除以0错误
+		return false;
+	Fid--;
+	string newTemp = parser->getNewTemp();
+	parser->emit("/", attributeOfT.place, attributeOfF.place, newTemp);
+	attributeOfT.place = newTemp;// T.place := newtemp;
+	return true;
+}
+```
+
+$$ G\rightarrow id$$
+
+```c++
+bool attGrammer11func(Parser* parser) {
+	Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到F的所有属性
+	Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
+	if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
+	attributeOfG.place = attributeOfId.place;
+	return true;
+}
+```
+
+### 输入输出示例
+
+输入语句：
+
+```
+a = 1.3 * ( -2.2 + 3 / 5 ) #
+```
+
+输出结果：
+
+<img src="img\output1.png" width=40%>
+
 
 ## 循环语句
 
