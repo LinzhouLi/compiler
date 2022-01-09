@@ -165,10 +165,10 @@ int main() {
 	parser_goto.attGrammers.push_back(attGrammer3);
 	// E->E-T
 	AttGrammer attGrammer4;
-	attGrammer3.left = "E";
-	attGrammer3.right.push_back("E");
-	attGrammer3.right.push_back("-");
-	attGrammer3.right.push_back("T");
+	attGrammer4.left = "E";
+	attGrammer4.right.push_back("E");
+	attGrammer4.right.push_back("-");
+	attGrammer4.right.push_back("T");
 	attGrammer4.function = attGrammer4func;
 	parser.attGrammers.push_back(attGrammer4);
 	parser_goto.attGrammers.push_back(attGrammer4);
