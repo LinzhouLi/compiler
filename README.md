@@ -383,7 +383,7 @@ a = 1.3 * ( -2.2 + 3 / 5 ) #
 | 20   | r_5  |      |      | r_5  |       |      |      |      |      |      |      |      |
 | 21   |      |      |      |      |       |      | r_6  |      |      |      |      |      |
 
-部分产生式语义动作
+### 部分产生式语义动作
 
 $$E\rightarrow if\ T\ then\ H_1\ else \ H_2$$
 
@@ -447,7 +447,175 @@ if a>0 then b=0 else =1
 输出结果：<img src="img/结果.png">
 
 
+
 ## 循环语句
+
+### 产生式
+
+0. $$S'\rightarrow S   $$
+
+1. $$S\rightarrow while\ B\ do\ L   $$
+2. $$B\rightarrow MT   $$
+3. $$L\rightarrow MS   $$
+4. $$M\rightarrow '\ '   $$
+5. $$E\rightarrow id   $$
+6. $$S\rightarrow A   $$
+7. $$A\rightarrow G=E   $$
+8. $$T\rightarrow E\ relop\ E   $$
+9. $$G\rightarrow id   $$
+
+### DFA
+
+![循环](README.assets/循环.png)
+
+### LR分析表
+
+|      | #    | while | do   |      | id   | =    | relop | S    | B    | L    | M    | T    | E    | A    | G    |
+| ---- | ---- | ----- | ---- | ---- | ---- | ---- | ----- | ---- | ---- | ---- | ---- | ---- | ---- | ---- | ---- |
+| 0    |      | s_2   |      |      | s_21 |      |       | 1    |      |      |      |      |      | 8    | 9    |
+| 1    | acc  |       |      |      |      |      |       |      |      |      |      |      |      |      |      |
+| 2    |      |       |      | s_3  |      |      |       |      | 6    |      | 4    |      |      |      |      |
+| 3    |      |       |      |      | r_4  |      |       |      |      |      |      |      |      |      |      |
+| 4    |      |       |      |      | s_5  |      |       |      |      |      |      | 7    | 13   |      |      |
+| 5    |      |       |      |      |      |      | r_5   |      |      |      |      |      |      |      |      |
+| 6    |      |       | s_16 |      |      |      |       |      |      |      |      |      |      |      |      |
+| 7    |      |       | r_2  |      |      |      |       |      |      |      |      |      |      |      |      |
+| 8    | r_6  |       |      |      |      |      |       |      |      |      |      |      |      |      |      |
+| 9    |      |       |      |      |      | s_10 |       |      |      |      |      |      |      |      |      |
+| 10   |      |       |      |      | s_12 |      |       |      |      |      |      |      | 11   |      |      |
+| 11   | r_7  |       |      |      |      |      |       |      |      |      |      |      |      |      |      |
+| 12   | r_5  |       |      |      |      |      |       |      |      |      |      |      |      |      |      |
+| 13   |      |       |      |      |      |      | s_14  |      |      |      |      |      |      |      |      |
+| 14   |      |       |      |      | s_22 |      |       |      |      |      |      |      | 15   |      |      |
+| 15   |      |       | r_8  |      |      |      |       |      |      |      |      |      |      |      |      |
+| 16   |      |       |      | s_19 |      |      |       |      |      | 17   | 18   |      |      |      |      |
+| 17   | r_1  |       |      |      |      |      |       |      |      |      |      |      |      |      |      |
+| 18   |      | s_2   |      |      | s_21 |      |       | 20   |      |      |      |      |      | 8    | 9    |
+| 19   |      | r_4   |      |      | r_4  |      |       |      |      |      |      |      |      |      |      |
+| 20   | r_3  |       |      |      |      |      |       |      |      |      |      |      |      |      |      |
+| 21   |      |       |      |      |      | r_9  |       |      |      |      |      |      |      |      |      |
+| 22   |      |       | r_5  |      |      |      |       |      |      |      |      |      |      |      |      |
+
+### 部分产生式语义动作
+
+$$S\rightarrow while\ B\ do\ L   $$
+
+```c++
+bool attGrammer1func(Parser* parser) { 
+	Sid++;
+	Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
+	Attribute& attributeOfB = parser->symbolTabel.getAttribute(B());
+	Attribute& attributeOfL = parser->symbolTabel.getAttribute(L());
+	if (attributeOfL.nextList != -1) {
+		parser->backPatch(attributeOfL.nextList, attributeOfB.quad);
+	}
+	
+	parser->backPatch(attributeOfB.trueList, attributeOfL.quad);
+	parser->emit("j", "-", "-", std::to_string(attributeOfB.quad));
+	Bid--;
+	Lid--;
+	return true;
+}
+```
+
+$$B\rightarrow MT   $$
+
+```c++
+bool attGrammer2func(Parser* parser) { 
+	Bid++;
+	Attribute& attributeOfB = parser->symbolTabel.getAttribute(B()); 
+	Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T());
+	attributeOfB.quad = attributeOfM.quad;
+	attributeOfB.trueList = attributeOfT.trueList;
+	Mid--;
+	Tid--;
+	return true;
+}
+```
+
+$$L\rightarrow MS   $$
+
+```c++
+bool attGrammer3func(Parser* parser) { 
+	Lid++;
+	Attribute& attributeOfL = parser->symbolTabel.getAttribute(L());
+	Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+	Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
+	attributeOfL.quad = attributeOfM.quad;
+	attributeOfL.nextList = attributeOfS.nextList;
+	Mid--;
+	Sid--;
+	return true;
+}
+```
+
+$$M\rightarrow '\ '   $$
+
+```c++
+bool attGrammer4func(Parser* parser) {
+	Mid++;
+	Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+	attributeOfM.quad = parser->nextQuad;
+	return true;
+}
+```
+
+$$A\rightarrow G=E   $$
+
+```c++
+bool attGrammer7func(Parser* parser) {
+	Aid++;
+	Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); 
+	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); 
+	parser->emit(":=", attributeOfE.place, " ", attributeOfG.place);
+	Gid--;
+	Eid--;
+	return true;
+}
+```
+
+$$T\rightarrow E\ relop\ E   $$
+
+```c++
+bool attGrammer8func(Parser* parser) {
+	Tid++;
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); 
+	Attribute& attributeOfE2 = parser->symbolTabel.getAttribute(E());
+	Eid--;
+	Attribute& attributeOfE1 = parser->symbolTabel.getAttribute(E());
+	Attribute& attributeOfrelop = parser->symbolTabel.getAttribute("relop");
+	attributeOfT.trueList = parser->makeList(parser->nextQuad);
+	attributeOfT.falseList = parser->makeList(parser->nextQuad + 1);
+	string a = attributeOfrelop.op;
+	string b = "j";
+	b = b + a;
+	parser->emit(b, attributeOfE1.place, attributeOfE2.place, "0");
+	parser->emit("j", "-", "-", "0");
+	return true;
+}
+
+```
+
+### 输入输出示例
+
+输入语句：
+
+```
+while  1 > 2 do  a = 5
+```
+
+输出结果：![whileOut1](README.assets/whileOut1.png)
+
+输入语句：
+
+```
+while  1 > 2 do  while  3 < a do  b = 6
+```
+
+输出结果：![whileOut2](README.assets/whileOut2.png)
+
+
 
 ## 实验小结
 
