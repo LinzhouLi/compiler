@@ -16,11 +16,11 @@ using std::setw;
 
 class Parser;
 
-class AttGrammer { // ÊôÐÔÎÄ·¨
+class AttGrammer { // å±žæ€§æ–‡æ³?
 public:
 	string left;
 	vector<string> right;
-	bool (*function)(Parser* parser); // ÓïÒå¶¯×÷ (º¯ÊýÖ¸Õë)
+	bool (*function)(Parser* parser); // è¯­ä¹‰åŠ¨ä½œ (å‡½æ•°æŒ‡é’ˆ)
 
 	AttGrammer() : function(nullptr) { }
 	AttGrammer(const string& _left, const vector<string>& _right, bool (*f)(Parser* parser) = nullptr) : left(_left), right(_right), function(f) { }
@@ -28,11 +28,11 @@ public:
 
 class Parser {
 private:
-	LRAnalysisTable LRTable; // LR·ÖÎö±í
-	vector<Quaternion> quaternions; // ËÄÔªÊ½
+	LRAnalysisTable LRTable; // LRåˆ†æžè¡?
+	vector<Quaternion> quaternions; // å››å…ƒå¼?
 
-	stack<int> states; // ×´Ì¬Õ»
-	stack<string> symbols; // ·ûºÅÕ»
+	stack<int> states; // çŠ¶æ€æ ˆ
+	stack<string> symbols; // ç¬¦å·æ ?
 
 	int tempId, terminalId;
 
@@ -40,7 +40,7 @@ public:
 	int nextQuad; // ÏÂÒ»ÌõËÄÔªÊ½µÄ±êºÅ
 	vector<AttGrammer> attGrammers; // ÊôÐÔÎÄ·¨
 	SymbolTable symbolTabel; // ·ûºÅ±í
-	SymbolTable variableTable; // ·ûºÅ±í
+	SymbolTable variableTable; // ±äÁ¿±í
 
 	Parser();
 	Parser(const string& filePath);
@@ -50,6 +50,7 @@ public:
 
 	void emit(const string& op, const string& arg1, const string& arg2, const string& result);
 	int makeList(const int& i);
+	void pop();
 	int merge(const int& p1, const int& p2);
 	void backPatch(const int& p, const int& t);
 	void print();
@@ -80,6 +81,11 @@ void Parser::emit(const string& op, const string& arg1, const string& arg2, cons
 	nextQuad++;
 }
 
+void Parser::pop() {
+	quaternions.pop_back();
+	nextQuad--;
+}
+
 int Parser::makeList(const int& i) {
 	return i;
 }
@@ -97,10 +103,10 @@ void Parser::backPatch(const int& p, const int& t) {
 	int _p = p;
 	while (quaternions[_p].result != "0") {
 		int next_p = atoi(quaternions[_p].result.c_str()); // string->int
-		quaternions[_p].result = std::to_string(t); // »ØÌî
+		quaternions[_p].result = std::to_string(t); // å›žå¡«
 		_p = next_p;
 	}
-	quaternions[_p].result = std::to_string(t); // »ØÌî
+	quaternions[_p].result = std::to_string(t); // å›žå¡«
 }
 
 void Parser::init() {
@@ -117,19 +123,19 @@ void Parser::init() {
 bool Parser::parse(const vector<string>& str) {
 	states.push(0);
 	symbols.push("#");
-	int p = 0; // ×Ö·û´®Ö¸Õë
+	int p = 0; // å­—ç¬¦ä¸²æŒ‡é’?
 	bool fail = false, accept = false;
 	while (1) {
 		int s = states.top();
 		string symbol = str[p];
 		Action action;
-		if (isNumber(symbol)) { // ÅÐ¶ÏsymbolÊÇ·ñÎªÊý×Ö
+		if (isNumber(symbol)) { // åˆ¤æ–­symbolæ˜¯å¦ä¸ºæ•°å­?
 			Attribute& terminal = symbolTabel.getAttribute("id");
 			terminal.place = symbol;
 			terminal.type = string("Number");
 			action = LRTable.getAction(s, string("id"));
 		}
-		else if (isBool(symbol)) { // ÅÐ¶ÏsymbolÊÇ·ñÎª²¼¶ûÐÍ
+		else if (isBool(symbol)) { // åˆ¤æ–­symbolæ˜¯å¦ä¸ºå¸ƒå°”åž‹
 			Attribute& terminal = symbolTabel.getAttribute("id");
 			terminal.place = symbol;
 			terminal.type = string("Bool");
@@ -144,7 +150,7 @@ bool Parser::parse(const vector<string>& str) {
 		else if (ifKeywords(symbol)) { // ÅÐ¶ÏsymbolÊÇ·ñÎªºÏ·¨¹Ø¼ü×Ö
 			action = LRTable.getAction(s, symbol);
 		}
-		else if (ifVariable(symbol)) { // ÅÐ¶ÏsymbolÊÇ·ñÎªºÏ·¨±äÁ¿
+		else if (ifVariable(symbol)) { // åˆ¤æ–­symbolæ˜¯å¦ä¸ºåˆæ³•å˜é‡?
 			Attribute& terminal = symbolTabel.getAttribute("id");
 			terminal.place = symbol;
 			terminal.type = string("Variable");
@@ -154,15 +160,15 @@ bool Parser::parse(const vector<string>& str) {
 
 		switch (action.act)
 		{
-			case Act::Shift: { // ÒÆ½ø
+			case Act::Shift: { // ç§»è¿›
 				states.push(action.state);
 				symbols.push(symbol);
-				p++; // Ö¸ÏòÏÂÒ»¸ö×Ö·û
+				p++; // æŒ‡å‘ä¸‹ä¸€ä¸ªå­—ç¬?
 				break;
 			}
 
-			case Act::Reduce: { // ¹æÔ¼
-				AttGrammer grammer = attGrammers[action.state]; // ¶ÔÓ¦ÊôÐÔÎÄ·¨
+			case Act::Reduce: { // è§„çº¦
+				AttGrammer grammer = attGrammers[action.state]; // å¯¹åº”å±žæ€§æ–‡æ³?
 				if (grammer.function) {
 					fail = !grammer.function(this); // Ö´ÐÐ¶ÔÓ¦ÓïÒå¶¯×÷
 				}
@@ -171,7 +177,7 @@ bool Parser::parse(const vector<string>& str) {
 					symbols.pop();
 				}
 				int nextState = LRTable.getGoto(states.top(), grammer.left).state;
-				if (nextState < 0) { // ¹æÔ¼×´Ì¬²»´æÔÚ, ³ö´í
+				if (nextState < 0) { // è§„çº¦çŠ¶æ€ä¸å­˜åœ¨, å‡ºé”™
 					fail = true;
 					break;
 				}
@@ -182,12 +188,12 @@ bool Parser::parse(const vector<string>& str) {
 				}
 			}
 
-			case Act::Acc: { // ½ÓÊÜ
+			case Act::Acc: { // æŽ¥å—
 				accept = true;
 				break;
 			}
 
-			case Act::Fail: { // ³ö´í
+			case Act::Fail: { // å‡ºé”™
 				fail = true;
 				break;
 			}
