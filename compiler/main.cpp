@@ -821,308 +821,446 @@ namespace compose {
 }
 
 namespace boolean {
-	int Eid = 0;
-	int Fid = 0;
-	int Tid = 0;
-	int Mid = 0;
-	int Gid = 0;
-	int Sid = 0;
-
-	string S() {
-		return "S_" + std::to_string(Sid);
-	}
-
-	string G() {
-		return "G_" + std::to_string(Gid);
-	}
-
-	string E() {
-		return "E_" + std::to_string(Eid);
-	}
-
-	string F() {
-		return "F_" + std::to_string(Fid);
-	}
-
-	string T() {
-		return "T_" + std::to_string(Tid);
-	}
-
-	string M() {
-		return "M_" + std::to_string(Mid);
-	}
-
-	// S'->S
-	bool attGrammer1func(Parser* parser) {
-		return true;
-	}
-
-	// S->G=E
-	bool attGrammer2func(Parser* parser) {
-		Sid++;
-		Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); // 得到T的所有属性
-		Gid--;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		Eid--;
-		parser->backPatch(attributeOfE.trueList, parser->nextQuad);
-		parser->backPatch(attributeOfE.falseList, parser->nextQuad + 1);
-		parser->emit(":=", "true", " ", attributeOfG.place);
-		parser->emit(":=", "false", " ", attributeOfG.place);
-		return true;
-	}
-
-	//E→E1 or M E2
-	//{ backpatch(E1.falselist, M.quad);
-	// E.truelist: = merge(E1.truelist, E2.truelist);
-	// E.falselist: = E2.falselist }
-	// E→E||MT
-	bool attGrammer3func(Parser* parser) {
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到E的所有属性
-		Tid--;
-		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); // 得到M的所有属性
-		Mid--;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		parser->backPatch(attributeOfE.falseList, attributeOfM.quad);
-		attributeOfE.trueList = parser->merge(attributeOfE.trueList, attributeOfT.trueList);
-		attributeOfE.falseList = attributeOfT.falseList;
-		return true;
-	}
-	//E→E1and M E2
-	//{ backpatch(E1.truelist, M.quad);
-	// E.truelist: = E2.truelist;
-	// E.falselist: = merge(E1.falselist,E2.falselist) }
-	// E->E&&MT
-	bool attGrammer4func(Parser* parser) {
-
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Tid--;
-		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); // 得到M的所有属性
-		Mid--;
-
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		parser->backPatch(attributeOfE.trueList, attributeOfM.quad);
-		attributeOfE.trueList = attributeOfT.trueList;
-		attributeOfE.falseList = parser->merge(attributeOfE.falseList, attributeOfT.falseList);
-		return true;
-
-		/*
-		string newTemp = parser->getNewTemp();
-		parser->emit("-", attributeOfE.place, attributeOfT.place, newTemp);
-		attributeOfE.place = newTemp;// E.place := newtemp;
-		return true;
-		*/
-	}
-
-	// E->T
-	bool attGrammer5func(Parser* parser) {
-		Eid++;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Tid--;
-		attributeOfE.place = attributeOfT.place;
-		return true;
-	}
-
-	// T->TrelopF
-	bool attGrammer6func(Parser* parser) {
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
-		Fid--;
-
-		Attribute& attributeOfRelop = parser->symbolTabel.getAttribute("relop");
-		attributeOfT.trueList = parser->makeList(parser->nextQuad);
-		attributeOfT.falseList = parser->makeList((parser->nextQuad) + 1);
-		parser->emit("j" + attributeOfRelop.op, attributeOfT.place, attributeOfF.place, "0");
-		parser->emit("j", " ", " ", "0");
-		return true;
-	}
-	// T->F
-	bool attGrammer7func(Parser* parser) {
-		Tid++;
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
-		Fid--;
-		attributeOfT.place = attributeOfF.place;
-		return true;
-	}
-
-	// F->(E)
-	bool attGrammer8func(Parser* parser) {
-		Fid++;
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到T的所有属性
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		Eid--;
-		attributeOfF.place = attributeOfE.place;
-		return true;
-	}
-
-	// F->!F
-	bool attGrammer9func(Parser* parser) {
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到T的所有属性
-		int temp = attributeOfF.trueList;
-		attributeOfF.trueList = attributeOfF.falseList;
-		attributeOfF.falseList = temp;
-		return true;
-	}
-
-	// F->id
-	bool attGrammer10func(Parser* parser) {
-		Fid++;
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
-		attributeOfF.place = attributeOfId.place;
-		return true;
-	}
-
-	// G->id
-	bool attGrammer11func(Parser* parser) {
-		Gid++;
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); // 得到F的所有属性
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
-		if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
-		attributeOfG.place = attributeOfId.place;
-		return true;
-	}
-
-	// M->epsilon
-	bool attGrammer12func(Parser* parser) {
-		Mid++;
-		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M());
-		attributeOfM.quad = parser->nextQuad;
-		return true;
-	}
-
-	void run() {
-		Parser parser("booleanLRTable.csv");
-
-		// S'->S
-		AttGrammer attGrammer1;
-		attGrammer1.left = "S'";
-		attGrammer1.right.push_back("S");
-		attGrammer1.function = attGrammer1func;
-		parser.attGrammers.push_back(attGrammer1);
-
-		// S->G=E
-		AttGrammer attGrammer2;
-		attGrammer2.left = "S";
-		attGrammer2.right.push_back("G");
-		attGrammer2.right.push_back("=");
-		attGrammer2.right.push_back("E");
-		attGrammer2.function = attGrammer2func;
-		parser.attGrammers.push_back(attGrammer2);
-
-		// E->E||MT
-		AttGrammer attGrammer3;
-		attGrammer3.left = "E";
-		attGrammer3.right.push_back("E");
-		attGrammer3.right.push_back("||");
-		attGrammer3.right.push_back("M");
-		attGrammer3.right.push_back("T");
-		attGrammer3.function = attGrammer3func;
-		parser.attGrammers.push_back(attGrammer3);
-
-		// E->E&&MT
-		AttGrammer attGrammer4;
-		attGrammer4.left = "E";
-		attGrammer4.right.push_back("E");
-		attGrammer4.right.push_back("&&");
-		attGrammer4.right.push_back("M");
-		attGrammer4.right.push_back("T");
-		attGrammer4.function = attGrammer4func;
-		parser.attGrammers.push_back(attGrammer4);
-
-		// E->T
-		AttGrammer attGrammer5;
-		attGrammer5.left = "E";
-		attGrammer5.right.push_back("T");
-		attGrammer5.function = attGrammer5func;
-		parser.attGrammers.push_back(attGrammer5);
-
-		// T->TrelopF
-		AttGrammer attGrammer6;
-		attGrammer6.left = "T";
-		attGrammer6.right.push_back("T");
-		attGrammer6.right.push_back("relop");
-		attGrammer6.right.push_back("F");
-		attGrammer6.function = attGrammer6func;
-		parser.attGrammers.push_back(attGrammer6);
-
-
-		// T->F
-		AttGrammer attGrammer7;
-		attGrammer7.left = "T";
-		attGrammer7.right.push_back("F");
-		attGrammer7.function = attGrammer7func;
-		parser.attGrammers.push_back(attGrammer7);
-
-		// F->(E)
-		AttGrammer attGrammer8;
-		attGrammer8.left = "F";
-		attGrammer8.right.push_back("(");
-		attGrammer8.right.push_back("E");
-		attGrammer8.right.push_back(")");
-		attGrammer8.function = attGrammer8func;
-		parser.attGrammers.push_back(attGrammer8);
-
-		// F->!F
-		AttGrammer attGrammer9;
-		attGrammer9.left = "F";
-		attGrammer9.right.push_back("!");
-		attGrammer9.right.push_back("F");
-		attGrammer9.function = attGrammer9func;
-		parser.attGrammers.push_back(attGrammer9);
-
-		// F->id
-		AttGrammer attGrammer10;
-		attGrammer10.left = "F";
-		attGrammer10.right.push_back("id");
-		attGrammer10.function = attGrammer10func;
-		parser.attGrammers.push_back(attGrammer10);
-
-		//G->id
-		AttGrammer attGrammer11;
-		attGrammer11.left = "G";
-		attGrammer11.right.push_back("id");
-		attGrammer11.function = attGrammer11func;
-		parser.attGrammers.push_back(attGrammer11);
-
-		//M->epsilon
-		AttGrammer attGrammer12;
-		attGrammer12.left = "M";
-		attGrammer12.right.push_back("epsilon");
-		attGrammer12.function = attGrammer12func;
-		parser.attGrammers.push_back(attGrammer12);
-
-		vector<string> str;
-		string s;
-		bool flag = true;
-		cout << "请输入语句:\n";
-		while (flag) {
-			while (1) {
-				cin >> s;
-				if (s == string("#")) {
-					str.push_back(s);
-					flag = false;
-					break;
-				}
-				else if (s == string("{") || s == string("while") ||
-					s == string("||") || s == string("&&")) {
-					str.push_back(s);
-					str.push_back("epsilon");
-				}
-				else if (s == string("{")) {
-					str.push_back("epsilon");
-					str.push_back(s);
-				}
-				else str.push_back(s);
+	using namespace std;
+                              //&&	||	!	true false(	  )	  i	 rop   # 
+           int action[18][10]={ { 0	, 0	 ,4	,5	, 6	 ,7	, 0	, 8	, 0	,  0},//0
+				{ 9	, 0	 ,0	,0	, 0	 ,0	,-2	, 0	, 0	,100},//1
+				{-2	,10	 ,0	,0	, 0	 ,0	,-2	, 0	, 0	, -2},//2
+				{-4	,-4	 ,0	,0	, 0	 ,0	,-4	, 0	, 0	, -4},//3
+				{ 0	, 0	 ,4	,5	, 6	 ,7	, 0	, 8	, 0	,  0},//4
+				{-7	,-7	 ,0	,0	, 0	 ,0	,-7	, 0	, 0	, -7},//5
+				{-8	,-8	 ,0	,0	, 0	 ,0	,-8	, 0	, 0	, -8},//6
+				{ 0	, 0	 ,4	,5	, 6	 ,7	, 0	, 8	, 0	,  0},//7
+				{ 0	, 0	 ,0	,0	, 0	 ,0	, 0	, 0	,13	,  0},//8
+				{ 0	, 0	 ,4	,5	, 6	 ,7	, 0	, 8	, 0	,  0},//9
+				{ 0	, 0	 ,4	,5	, 6	 ,7	, 0	, 8	, 0	,  0},//10
+				{-5	,-5	 ,0	,0	, 0	 ,0	,-5	, 0	, 0	, -5},//11
+				{ 9	, 0	 ,0	,0	, 0	 ,0	,16	, 0	, 0	,  0},//12
+				{ 0	, 0	 ,0	,0	, 0	 ,0	, 0	,17	, 0	,  0},//13
+				{-1	,10  ,0	,0	, 0	 ,0	,-1	, 0	, 0	, -1},//14
+				{-3	,-3	 ,0	,0	, 0	 ,0	,-3	, 0	, 0	, -3},//15
+				{-6	,-6	 ,0	,0	, 0	 ,0	,-6	, 0	, 0	, -6},//16
+				{-9	,-9	 ,0	,0	, 0	 ,0	,-9	, 0	, 0	, -9}};//17
+ 
+                               //B   T    F
+           int gotol[18][3]={   {1	,2	, 3},//0
+				{0	,0	, 0},//1
+				{0	,0	, 0},//2
+				{0	,0	, 0},//3
+				{0	,0	,11},//4
+				{0	,0	, 0},//5
+				{0	,0	, 0},//6
+				{12	,2	, 3},//7
+				{0	,0	, 0},//8
+				{0	,14	, 3},//9
+                                {0	,0	,15},//10
+				{0	,0	, 0},//11
+				{0	,0	, 0},//12
+                                {0	,0	, 0},//13
+				{0	,0	, 0},//14
+				{0	,0	, 0},//15
+				{0	,0	, 0},//16
+                                {0	,0	, 0}};//17
+ 
+	//终结符集合
+	string endls[10]={"&&","||","!","true","false", "(",")", "i","rop","#" };
+	//非终结符集合
+	string noends[3]={"B","T","F"};
+	//产生式集合
+	string products[10]={"B","B && T", "T","T || F","F","! F","( B )","true", "false","i rop i"};
+	//栈类
+	class statestack
+	{	
+		private:
+			int *base;//栈底指针
+			int *top;//栈顶指针
+			int size;//栈内元素个数
+			int stacksize;//栈的大小
+		public:
+			statestack()
+			{
+				size=0;
+				stacksize=20;
+				base=new int[stacksize];;
+				top=base;	
 			}
+			int getTop()//获取栈顶的元素。
+			{
+				if(base==top)
+				{
+					return -1;  
+				}
+				else
+				{
+					return *(top-1);
+				}
+			}  
+			bool statePush(int elem)//元素入栈
+			{
+				++size;
+				(*top)=elem;
+				++top;
+				return true;
+			}
+			void statePop(int time)//元素出栈
+			{
+				for(int i=0;i<time;i++)
+				{
+					--top;
+					--size;
+				}
+			}
+			void printState()//输出栈内的所有元素
+			{
+				string str=" ";
+				int *pre;
+				for(pre=base;pre<top;pre++)
+				{
+					if(*pre>9)
+					{
+						char ch1=(*pre/10)+48;
+						char ch2=(*pre%10)+48;
+				str+=ch1;
+						str+=ch2;
+					}
+					else
+					{
+			    char ch=*pre+48;
+					    str+=ch;
+					}		
+				}
+				cout<<setw(15)<<setiosflags(ios_base::left)<<str;
+			}
+	};
+
+	class symbolstack
+	{
+		private:
+			string *base;
+			string *top;
+			int size;
+			int stacksize;
+		public:
+			symbolstack()
+			{
+				size=0;
+				stacksize=20;
+				base=new string[stacksize];;
+				top=base;
+			}	
+			string getTop()//获取栈顶的元素。
+			{
+				if(base==top)
+				{
+					return " ";  
+				}
+				else
+				{
+					return *(top-1);
+				}
+			}  
+			//元素入栈
+			bool symbolPush(string elem)
+			{
+				++size;
+				*top=elem;
+				++top;
+				return true;
+			}
+			//元素出栈
+			void symbolPop(int time)
+			{
+				for(int i=0;i<time;i++)
+				{
+					--top;
+					--size;
+				}
+			}
+			//输出栈内的所有元素
+			void printSymbol()
+			{
+				string str=" ";
+				string *pre;
+				for(pre=base;pre<top;pre++)
+				{
+				str+=*pre;
+				}
+				cout<<setw(15)<<setiosflags(ios_base::left)<<str;
+			}
+	};
+
+	class analyseLR
+	{
+	private:
+		int step;
+		string inputstr;//布尔表达式
+		statestack state;//状态栈
+		symbolstack symbol;//符号栈
+		vector<string> fors;//四元式
+	public:
+		//构造函数
+		analyseLR()
+		{	
+			step=0;
+			inputstr=" ";
+			state=statestack();
+			symbol=symbolstack();
+		}
+		//初始化两个栈
+		void initstack()
+		{
+			state.statePush(0);
+			symbol.symbolPush("#");
+		}
+	    void printInfo(string str)
+		{
+			cout<<str<<endl;
+		}
+		void printInfoEX(string str1,string str2,string str3,string str4,string str5)
+		{
+			cout<<setw(6)<<setiosflags(ios_base::left)<<str1;
+			cout<<setw(15)<<setiosflags(ios_base::left)<<str2;
+			cout<<setw(15)<<setiosflags(ios_base::left)<<str3;
+			cout<<setw(24)<<setiosflags(ios_base::left)<<str4;
+			cout<<setw(10)<<setiosflags(ios_base::left)<<str5<<endl;
+		}
+		void printfInfoEX(int str1,statestack state,symbolstack symbol,string str4,string str5)
+		{
+			cout<<setw(5)<<setiosflags(ios_base::left)<<str1;
+			state.printState();
+			symbol.printSymbol();
+			cout<<setw(25)<<setiosflags(ios_base::left)<<str4;
+			cout<<setw(10)<<setiosflags(ios_base::left)<<str5<<endl;
 		}
 
-		parser.init(); // 初始化一下
-		if (parser.parse(str)) parser.print();
-		else std::cout << "语法出错!" << std::endl;
+		void initstageInfo()
+		{
+			printInfo("布尔表达式的文法如下：");
+			cout<<"(0)  B’-> B"<<endl;
+			cout<<"(1)  B -> B && T"<<endl;
+			cout<<"(2)  B -> T"<<endl;
+			cout<<"(3)  T -> T || F"<<endl;
+			cout<<"(4)  T -> F"<<endl;
+			cout<<"(5)  F -> ! F"<<endl;
+			cout<<"(6)  F -> ( B )"<<endl;
+			cout<<"(7)  F -> true"<<endl;
+			cout<<"(8)  F -> false "<<endl;
+			cout<<"(9)  F -> i rop i"<<endl;
+		}
+
+		void initInputstr()
+		{
+			printInfo("请输入布尔表达式:");
+			getline(cin,inputstr);
+		}
+		//将终结符和非终结符转换为action和gotol表中对应的列号
+		int strtoInt(string str)
+		{
+			if(str=="&&")
+				return 0;
+			if(str=="||")
+				return 1;
+			if(str=="!")
+				return 2;
+			if(str=="true")
+				return 3;
+			if(str=="false")
+				return 4;
+			if(str=="(")
+				return 5;
+			if(str==")")
+				return 6;
+			if(str=="i")
+				return 7;
+			if(str=="rop"||str=="<"||str==">")
+				return 8;
+			if(str=="#")
+				return 9;
+			if(str=="B")
+				return 0;
+			if(str=="T")
+				return 1;
+			if(str=="F")
+				return 2;
+		}
+		//判断字符是终结符还是非终结符
+		bool judgeSymbol(string str)
+		{
+			for (int i = 0; i < 10; i++)
+			{
+				if (endls[i] == str||str=="<"||str==">")
+					return true;
+			}
+			return false;
+		}
+		//根据产生式选择非终结符
+		int chooseNoEnds(int num)
+		{
+			if(num==1||num==2)
+				return 0;//选择“B”
+			if(num==3||num==4)
+				return 1;//选择“T”
+		    return 2;//选择“F”
+		}
+		//计算字符串中元素的个数
+		int calculatenum(string str)
+		{
+			int num=0;
+			for(int i=0;i<str.size();++i)
+			{
+				if(isgraph(str[i]))
+					continue;
+				else
+				{
+					++num;
+				}
+			}
+			++num;
+		return num;
+		}	
+
+		vector<string> separatestrEX(string str)
+		{
+			vector<string> vec;
+			int pos=0;
+			for(int i=0;i<str.size();++i)
+			{   
+				if(isspace(str[i]))//如果当前字符是空格
+				{
+					vec.push_back(str.substr(pos,i-pos));//复制起始位置为pos且长度为i-pos的字符串。
+					pos=i+1;
+				}
+			}
+			vec.push_back(str.substr(pos,str.size()-pos));
+			return vec;
+		}
+
+		string linkVectorstr(vector<string> &vecs,vector<string>::iterator iter)
+		{
+			string str=" ";
+			vector<string>::iterator it;
+				it=iter;
+			for(it;it<vecs.end();it++)
+			{
+				//cout<<*it; 
+				str+=*it;
+			}
+			return str;
+		}
+
+		void createforchief(int num, string lenstr, string ch)
+		{
+			//cout << num << "@" << lenstr<< "@" << ch << endl;
+			vector<string> strs = separatestrEX(lenstr);
+			vector<string>::iterator iter = strs.begin();
+			string str = " ";
+			string l1 = "(";
+			string l2 = ")";
+			string comma = ",";
+			if (num == 1)
+			{
+				string l0 = "=";
+				string arg1 = *iter;
+				str = l1 + l0 + comma + arg1 + comma + "_" + comma + ch + l2;
+			}
+			if (num == 2)
+			{
+				string op = *iter;
+				string arg1 = *(iter + 1);
+				str = l1 + op + comma + arg1 + comma + "_" + comma + ch + l2;
+			}
+			if (num == 3)
+			{
+				string arg1 = *iter;
+				string op = *(iter + 1);
+				string arg2 = *(iter + 2);
+				if (arg1 == "(")
+				{
+					str = l1 + "=" + comma + op + comma + "_" + comma + ch + l2;
+				}
+				else
+				{
+					str = l1 + op + comma + arg1 + comma + arg2 + comma + ch + l2;
+				}
+			}
+			fors.push_back(str);
+		}
+
+		void printForsInfo()
+		{
+			printInfo("中间代码四元式为");
+			vector<string>::iterator it=fors.begin();
+			for(it;it<fors.end();it++)
+			{
+				cout<<*it<<endl;
+			}
+		}
+		void Start()//开始函数.
+		{
+			initstageInfo();
+			initstack();//初始化两个栈
+			initInputstr();
+			vector<string> vec=separatestrEX(inputstr);//分开布尔表达式
+			vector<string>::iterator iter=vec.begin();
+			//printInfo("LR分析法的过程如下");
+			//printInfoEX("步骤","状态栈","符号栈","输入串","操作");
+
+
+			for(iter;iter!=vec.end();++iter)//依次遍历字符
+			{                                                            
+				string str1=linkVectorstr(vec,iter);
+				actionGoto(*iter,str1);
+			}
+
+			printForsInfo();
+		}
+		//LR分析函数
+		void actionGoto(string str,string str1)
+		{      		
+			    int x=state.getTop();//当前栈顶状态
+				int y=strtoInt(str);//当前将要输入的字符
+				if(action[x][y]>0&&judgeSymbol(str)&&(str!="#"))//移进
+				{
+					//printfInfoEX(step,state,symbol,str1,"移入"+str);
+					state.statePush(action[x][y]);
+					symbol.symbolPush(str);	
+					++step;
+				}
+				if(action[x][y]<0&&judgeSymbol(str))//规约
+				{
+					int operation=-action[x][y];
+					string lenstr=products[operation];//需要规约的产生式
+
+
+					int size=calculatenum(lenstr);//计算产生式的长度，进行规约
+					int c=chooseNoEnds(operation);
+					string ch=noends[c];//生成规约后的非终结符
+					//生成四元式
+					createforchief(size,lenstr,ch);
+
+					//printfInfoEX(step,state,symbol,str1,"规约"+noends[c]+"->"+products[operation]);
+					state.statePop(size);
+					symbol.symbolPop(size);
+					int topState=state.getTop();//获取规约后的栈顶状态
+					if(gotol[topState][c]>0)
+					{
+						int g=gotol[topState][c];
+						state.statePush(g);
+						symbol.symbolPush(ch);
+					}
+			++step; 
+					actionGoto(str,str1);
+				}
+				if((action[x][y]==100)&&(str=="#"))
+				{
+					//printfInfoEX(step,state,symbol,str1,"分析完成");
+				}
+			}
+		};    
+
+	void run() {
+		analyseLR ana=analyseLR();
+		ana.Start();	
 	}
 }
 
@@ -1594,5 +1732,6 @@ namespace loop{
 	}
 
 }
+
 int main() {
 }
