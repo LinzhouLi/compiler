@@ -27,8 +27,8 @@ namespace assignment {
 
 	// S->G=E
 	bool attGrammer2func(Parser* parser) {
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到T的所有属�?
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属�?
+		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
 		Eid--;
 		parser->emit(":=", attributeOfE.place, " ", attributeOfG.place);
 		return true;
@@ -36,8 +36,8 @@ namespace assignment {
 
 	// E->E+T
 	bool attGrammer3func(Parser* parser) {
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属�?
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
 		Tid--;
 		string newTemp = parser->getNewTemp();
 		parser->emit("+", attributeOfE.place, attributeOfT.place, newTemp);
@@ -47,8 +47,8 @@ namespace assignment {
 
 	// E->E-T
 	bool attGrammer4func(Parser* parser) {
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属�?
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
 		Tid--;
 		string newTemp = parser->getNewTemp();
 		parser->emit("-", attributeOfE.place, attributeOfT.place, newTemp);
@@ -59,8 +59,8 @@ namespace assignment {
 	// E->T
 	bool attGrammer5func(Parser* parser) {
 		Eid++;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属�?
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
 		Tid--;
 		attributeOfE.place = attributeOfT.place;
 		return true;
@@ -68,8 +68,8 @@ namespace assignment {
 
 	// T->T*F
 	bool attGrammer6func(Parser* parser) {
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属�?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 寰楀埌F鐨勬墍鏈夊睘鎬?
 		Fid--;
 		string newTemp = parser->getNewTemp();
 		parser->emit("*", attributeOfT.place, attributeOfF.place, newTemp);
@@ -79,9 +79,9 @@ namespace assignment {
 
 	// T->T/F
 	bool attGrammer7func(Parser* parser) {
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属�?
-		if (attributeOfF.place == "0")  // 直接除以0错误
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 寰楀埌F鐨勬墍鏈夊睘鎬?
+		if (attributeOfF.place == "0")  // 鐩存帴闄や互0閿欒
 			return false;
 		Fid--;
 		string newTemp = parser->getNewTemp();
@@ -93,8 +93,8 @@ namespace assignment {
 	// T->F
 	bool attGrammer8func(Parser* parser) {
 		Tid++;
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属�?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 寰楀埌F鐨勬墍鏈夊睘鎬?
 		Fid--;
 		attributeOfT.place = attributeOfF.place;
 		return true;
@@ -104,8 +104,8 @@ namespace assignment {
 	// F->(E)
 	bool attGrammer9func(Parser* parser) {
 		Fid++;
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(F()); // 得到T的所有属�?
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属�?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(F()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
 		Eid--;
 		attributeOfT.place = attributeOfE.place;
 		return true;
@@ -114,17 +114,17 @@ namespace assignment {
 	// F->id
 	bool attGrammer10func(Parser* parser) {
 		Fid++;
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属�?
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属�?
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 寰楀埌F鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 寰楀埌Number鐨勬墍鏈夊睘鎬?
 		attributeOfF.place = attributeOfId.place;
 		return true;
 	}
 
 	// G->id
 	bool attGrammer11func(Parser* parser) {
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到F的所有属�?
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属�?
-		if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
+		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 寰楀埌F鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 寰楀埌Number鐨勬墍鏈夊睘鎬?
+		if (attributeOfId.type != "Variable") return false; // G涓嶆槸鍙橀噺, 鍑洪敊
 		attributeOfG.place = attributeOfId.place;
 		return true;
 	}
@@ -224,16 +224,16 @@ namespace assignment {
 
 		vector<string> str;
 		string s;
-		cout << "请输入赋值语�?\n";
+		cout << "璇疯緭鍏ヨ祴鍊艰鍙?\n";
 		while (1) {
 			cin >> s;
 			str.push_back(s);
 			if (s == string("#")) break;
 		}
 
-		parser.init(); // 初始化一�?
+		parser.init(); // 鍒濆鍖栦竴涓?
 		if (parser.parse(str)) parser.print();
-		else std::cout << "语法出错!" << std::endl;
+		else std::cout << "璇硶鍑洪敊!" << std::endl;
 
 	}
 
@@ -330,7 +330,7 @@ namespace compose {
 		Attribute& attributeOfE = parser->symbolTabel.getAttribute(get("E", "both"));
 		Attribute& attributeOfT = parser->symbolTabel.getAttribute(get("T", "right"));
 		if (attributeOfE.type != "Number" || attributeOfT.type != "Number") {
-			cout << "���ʹ���" << endl;
+			cout << "类型错误" << endl;
 			return false;
 		}
 		string newTemp = parser->getNewTemp();
@@ -345,7 +345,7 @@ namespace compose {
 		Attribute& attributeOfE = parser->symbolTabel.getAttribute(get("E", "both"));
 		Attribute& attributeOfT = parser->symbolTabel.getAttribute(get("T", "right"));
 		if (attributeOfE.type != "Number" || attributeOfT.type != "Number") {
-			cout << "���ʹ���" << endl;
+			cout << "类型错误" << endl;
 			return false;
 		}
 		string newTemp = parser->getNewTemp();
@@ -369,7 +369,7 @@ namespace compose {
 		Attribute& attributeOfT = parser->symbolTabel.getAttribute(get("T", "both"));
 		Attribute& attributeOfF = parser->symbolTabel.getAttribute(get("F", "right"));
 		if (attributeOfT.type != "Number" || attributeOfF.type != "Number") {
-			cout << "���ʹ���" << endl;
+			cout << "类型错误" << endl;
 			return false;
 		}
 		string newTemp = parser->getNewTemp();
@@ -384,11 +384,11 @@ namespace compose {
 		Attribute& attributeOfT = parser->symbolTabel.getAttribute(get("T", "both"));
 		Attribute& attributeOfF = parser->symbolTabel.getAttribute(get("F", "right"));
 		if (attributeOfT.type != "Number" || attributeOfF.type != "Number") {
-			cout << "���ʹ���" << endl;
+			cout << "类型错误" << endl;
 			return false;
 		}
 		if (attributeOfF.type == "Number" && attributeOfF.place == "0") {
-			cout << "ֱ�ӳ���0����" << endl;
+			cout << "直接除以0错误" << endl;
 			return false;
 		}
 		string newTemp = parser->getNewTemp();
@@ -424,7 +424,7 @@ namespace compose {
 			string variableName = attributeOfId.place;
 			Attribute& attributeOfVariable = parser->variableTable.getAttribute(variableName);
 			if (attributeOfVariable.type == "Undefined") {
-				cout << "����" << variableName << "δ����" << endl;
+				cout << "变量" << variableName << "未定义" << endl;
 				return false;
 			}
 		}
@@ -438,7 +438,7 @@ namespace compose {
 		Attribute& attributeOfG = parser->symbolTabel.getAttribute(get("G", "left"));
 		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id");
 		if (attributeOfId.type != "Variable") {
-			cout << "��ֵ�����ӦΪ����, ���õ���" << attributeOfId.type << "����" << endl;
+			cout << "赋值号左边应为变量, 但得到了" << attributeOfId.type << "类型" << endl;
 			return false;
 		}
 		attributeOfG.place = attributeOfId.place;
@@ -519,16 +519,16 @@ namespace compose {
 			string variableName = attributeOfId.place;
 			Attribute& attributeOfVariable = parser->variableTable.getAttribute(variableName);
 			if (attributeOfVariable.type == "Undefined") {
-				cout << "����" << variableName << "δ����" << endl;
+				cout << "变量" << variableName << "未定义" << endl;
 				return false;
 			}
 			else if (attributeOfVariable.type != "Bool") {
-				cout << "����" << variableName << "����Ϊ" << attributeOfVariable.type << ", Ӧ��ΪBool" << endl;
+				cout << "变量" << variableName << "类型为" << attributeOfVariable.type << ", 应该为Bool" << endl;
 				return false;
 			}
 		}
 		else if (attributeOfId.type != "Bool") {
-			cout << attributeOfId.place << "����Ϊ" << attributeOfId.type << ", Ӧ��ΪBool" << endl;
+			cout << attributeOfId.place << "类型为" << attributeOfId.type << ", 应该为Bool" << endl;
 			return false;
 		}
 		attributeOfP.place = attributeOfId.place;
@@ -791,7 +791,7 @@ namespace compose {
 		vector<string> str;
 		string s;
 		bool flag = true;
-		cout << "���������:\n";
+		cout << "请输入语句:\n";
 		while (flag) {
 			while (1) {
 				cin >> s;
@@ -813,9 +813,9 @@ namespace compose {
 			}
 		}
 
-		parser.init(); // ��ʼ��һ��
+		parser.init(); // 初始化一下
 		if (parser.parse(str)) parser.print();
-		else std::cout << "�﷨����!" << std::endl;
+		else std::cout << "语法出错!" << std::endl;
 
 	}
 }
@@ -861,9 +861,9 @@ namespace boolean {
 	bool attGrammer2func(Parser* parser) {
 		Sid++;
 		Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); // �õ�T����������
+		Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); // 得到T的所有属性
 		Gid--;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // �õ�E����������
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
 		Eid--;
 		parser->backPatch(attributeOfE.trueList, parser->nextQuad);
 		parser->backPatch(attributeOfE.falseList, parser->nextQuad + 1);
@@ -872,35 +872,35 @@ namespace boolean {
 		return true;
 	}
 
-	//E��E1 or M E2
+	//E→E1 or M E2
 	//{ backpatch(E1.falselist, M.quad);
 	// E.truelist: = merge(E1.truelist, E2.truelist);
 	// E.falselist: = E2.falselist }
-	// E��E||MT
+	// E→E||MT
 	bool attGrammer3func(Parser* parser) {
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // �õ�E����������
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到E的所有属性
 		Tid--;
-		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); // �õ�M����������
+		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); // 得到M的所有属性
 		Mid--;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // �õ�E����������
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
 		parser->backPatch(attributeOfE.falseList, attributeOfM.quad);
 		attributeOfE.trueList = parser->merge(attributeOfE.trueList, attributeOfT.trueList);
 		attributeOfE.falseList = attributeOfT.falseList;
 		return true;
 	}
-	//E��E1and M E2
+	//E→E1and M E2
 	//{ backpatch(E1.truelist, M.quad);
 	// E.truelist: = E2.truelist;
 	// E.falselist: = merge(E1.falselist,E2.falselist) }
 	// E->E&&MT
 	bool attGrammer4func(Parser* parser) {
 
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // �õ�T����������
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
 		Tid--;
-		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); // �õ�M����������
+		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); // 得到M的所有属性
 		Mid--;
 
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // �õ�E����������
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
 		parser->backPatch(attributeOfE.trueList, attributeOfM.quad);
 		attributeOfE.trueList = attributeOfT.trueList;
 		attributeOfE.falseList = parser->merge(attributeOfE.falseList, attributeOfT.falseList);
@@ -917,8 +917,8 @@ namespace boolean {
 	// E->T
 	bool attGrammer5func(Parser* parser) {
 		Eid++;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // �õ�E����������
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // �õ�T����������
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
 		Tid--;
 		attributeOfE.place = attributeOfT.place;
 		return true;
@@ -926,9 +926,9 @@ namespace boolean {
 
 	// T->TrelopF
 	bool attGrammer6func(Parser* parser) {
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // �õ�T����������
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
 
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // �õ�F����������
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
 		Fid--;
 
 		Attribute& attributeOfRelop = parser->symbolTabel.getAttribute("relop");
@@ -941,8 +941,8 @@ namespace boolean {
 	// T->F
 	bool attGrammer7func(Parser* parser) {
 		Tid++;
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // �õ�T����������
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // �õ�F����������
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
 		Fid--;
 		attributeOfT.place = attributeOfF.place;
 		return true;
@@ -951,8 +951,8 @@ namespace boolean {
 	// F->(E)
 	bool attGrammer8func(Parser* parser) {
 		Fid++;
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // �õ�T����������
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // �õ�E����������
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到T的所有属性
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
 		Eid--;
 		attributeOfF.place = attributeOfE.place;
 		return true;
@@ -960,7 +960,7 @@ namespace boolean {
 
 	// F->!F
 	bool attGrammer9func(Parser* parser) {
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // �õ�T����������
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到T的所有属性
 		int temp = attributeOfF.trueList;
 		attributeOfF.trueList = attributeOfF.falseList;
 		attributeOfF.falseList = temp;
@@ -970,8 +970,8 @@ namespace boolean {
 	// F->id
 	bool attGrammer10func(Parser* parser) {
 		Fid++;
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // �õ�F����������
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // �õ�Number����������
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
+		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
 		attributeOfF.place = attributeOfId.place;
 		return true;
 	}
@@ -979,9 +979,9 @@ namespace boolean {
 	// G->id
 	bool attGrammer11func(Parser* parser) {
 		Gid++;
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); // �õ�F����������
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // �õ�Number����������
-		if (attributeOfId.type != "Variable") return false; // G���Ǳ���, ����
+		Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); // 得到F的所有属性
+		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
+		if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
 		attributeOfG.place = attributeOfId.place;
 		return true;
 	}
@@ -1098,7 +1098,7 @@ namespace boolean {
 		vector<string> str;
 		string s;
 		bool flag = true;
-		cout << "���������:\n";
+		cout << "请输入语句:\n";
 		while (flag) {
 			while (1) {
 				cin >> s;
@@ -1120,12 +1120,12 @@ namespace boolean {
 			}
 		}
 
-		parser.init(); // ��ʼ��һ��
+		parser.init(); // 初始化一下
 		if (parser.parse(str)) parser.print();
-		else std::cout << "�﷨����!" << std::endl;
+		else std::cout << "语法出错!" << std::endl;
 	}
 }
-//条件语句
+
 namespace conditional{
 
 	int Eid = 0;
@@ -1164,9 +1164,9 @@ namespace conditional{
 	bool attGrammer2func(Parser* parser) { 
 
 		Eid++;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属�?
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
-		Attribute& attributeOfH = parser->symbolTabel.getAttribute(H()); // 得到H的所有属�?
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfH = parser->symbolTabel.getAttribute(H()); // 寰楀埌H鐨勬墍鏈夊睘鎬?
 		Tid--;
 		Hid--;
 		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M());
@@ -1187,17 +1187,17 @@ namespace conditional{
 		Mid--;
 
 		Eid++;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属�?
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
 		Tid--;
-		Attribute& attributeOfH2 = parser->symbolTabel.getAttribute(H()); // 得到E的所有属�?
+		Attribute& attributeOfH2 = parser->symbolTabel.getAttribute(H()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
 		Hid--;
-		Attribute& attributeOfH1 = parser->symbolTabel.getAttribute(H()); // 得到E的所有属�?
+		Attribute& attributeOfH1 = parser->symbolTabel.getAttribute(H()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
 		Hid--;
 		parser->backPatch(attributeOfT.trueList, attributeOfM1.quad);
 		parser->backPatch(attributeOfT.falseList, attributeOfM2.quad);
 		Nid--;
-		Attribute& attributeOfN = parser->symbolTabel.getAttribute(N()); // 得到N的所有属�?
+		Attribute& attributeOfN = parser->symbolTabel.getAttribute(N()); // 寰楀埌N鐨勬墍鏈夊睘鎬?
 		Nid--;
 		attributeOfE.nextList = attributeOfN.nextList;
 		parser->pop();
@@ -1208,11 +1208,11 @@ namespace conditional{
 	// T->F relop F
 	bool attGrammer4func(Parser* parser) { 
 		Tid++;
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属�?
-		Attribute& attributeOfRelop = parser->symbolTabel.getAttribute("relop"); // 得到Relop的所有属�?
-		Attribute& attributeOfF2 = parser->symbolTabel.getAttribute(F()); // 得到E的所有属�?
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfRelop = parser->symbolTabel.getAttribute("relop"); // 寰楀埌Relop鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfF2 = parser->symbolTabel.getAttribute(F()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
 		Fid--;
-		Attribute& attributeOfF1 = parser->symbolTabel.getAttribute(F()); // 得到T的所有属�?
+		Attribute& attributeOfF1 = parser->symbolTabel.getAttribute(F()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
 		Fid--;	
 		attributeOfT.trueList = parser->makeList(parser->nextQuad);
 		attributeOfT.falseList = parser->makeList(parser->nextQuad + 1);
@@ -1224,8 +1224,8 @@ namespace conditional{
 	// F->id
 	bool attGrammer5func(Parser* parser) {
 		Fid++;
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属�?
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属�?
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 寰楀埌F鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 寰楀埌Number鐨勬墍鏈夊睘鎬?
 		attributeOfF.place = attributeOfId.place;
 		return true;
 	}
@@ -1235,13 +1235,13 @@ namespace conditional{
 		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M());
 		attributeOfM.quad = parser->nextQuad;
 		Hid++;
-		Attribute& attributeOfH = parser->symbolTabel.getAttribute(H()); // 得到T的所有属�?
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到T的所有属�?
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到E的所有属�?
+		Attribute& attributeOfH = parser->symbolTabel.getAttribute(H()); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 寰楀埌T鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 寰楀埌E鐨勬墍鏈夊睘鎬?
 		Fid--;
 		parser->emit(":=", attributeOfF.place, " ", attributeOfG.place);
 		Nid++;
-		Attribute& attributeOfN = parser->symbolTabel.getAttribute(N()); // 得到N的所有属�?
+		Attribute& attributeOfN = parser->symbolTabel.getAttribute(N()); // 寰楀埌N鐨勬墍鏈夊睘鎬?
 		attributeOfN.nextList = parser->makeList(parser->nextQuad);
 		parser->emit("j", " ", " ", "0");
 		return true;
@@ -1249,9 +1249,9 @@ namespace conditional{
 
 	// G->id
 	bool attGrammer7func(Parser* parser) {
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到F的所有属�?
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属�?
-		if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
+		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 寰楀埌F鐨勬墍鏈夊睘鎬?
+		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 寰楀埌Number鐨勬墍鏈夊睘鎬?
+		if (attributeOfId.type != "Variable") return false; // G涓嶆槸鍙橀噺, 鍑洪敊
 		attributeOfG.place = attributeOfId.place;
 		return true;
 	}
@@ -1324,19 +1324,275 @@ namespace conditional{
 
 		vector<string> str;
 		string s;
-		cout << "请输入条件语�?\n";
+		cout << "璇疯緭鍏ユ潯浠惰鍙?\n";
 		while (1) {
 			cin >> s;
 			str.push_back(s);
 			if (s == string("#")) break;
 		}
-		parser.init(); // 初始化一�?
+		parser.init(); // 鍒濆鍖栦竴涓?
 		if (parser.parse(str)) parser.print();
-		else std::cout << "语法出错!" << std::endl;
+		else std::cout << "璇硶鍑洪敊!" << std::endl;
 
 	}
 
 }
+namespace loop{
+	
+	int Sid = 0;
+	int Bid = 0;
+	int Lid = 0;
+	int Mid = 0;
+	int Tid = 0;
+	int Eid = 0;
+	int Aid = 0;
+	int Gid = 0;
 
+	string S() {
+		return "S_" + std::to_string(Sid);
+	}
+
+	string B() {
+		return "B_" + std::to_string(Bid);
+	}
+
+	string L() {
+		return "L_" + std::to_string(Lid);
+	}
+
+	string M() {
+		return "M_" + std::to_string(Mid);
+	}
+
+	string T() {
+		return "T_" + std::to_string(Tid);
+	}
+
+	string E() {
+		return "E_" + std::to_string(Eid);
+	}
+
+	string A() {
+		return "A_" + std::to_string(Aid);
+	}
+
+	string G() {
+		return "G_" + std::to_string(Gid);
+	}
+
+	bool attGrammer0func(Parser* parser) {
+
+		return true;
+	}
+
+	// S->while B do L
+	bool attGrammer1func(Parser* parser) { 
+		Sid++;
+		Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
+		Attribute& attributeOfB = parser->symbolTabel.getAttribute(B());
+		Attribute& attributeOfL = parser->symbolTabel.getAttribute(L());
+		if (attributeOfL.nextList != -1) {
+			parser->backPatch(attributeOfL.nextList, attributeOfB.quad);
+		}
+
+		parser->backPatch(attributeOfB.trueList, attributeOfL.quad);
+		parser->emit("j", "-", "-", std::to_string(attributeOfB.quad));
+		Bid--;
+		Lid--;
+		return true;
+	}
+
+	// B->MT
+	bool attGrammer2func(Parser* parser) { 
+		Bid++;
+		Attribute& attributeOfB = parser->symbolTabel.getAttribute(B()); 
+		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T());
+		attributeOfB.quad = attributeOfM.quad;
+		attributeOfB.trueList = attributeOfT.trueList;
+		Mid--;
+		Tid--;
+		return true;
+	}
+
+	// L->MS
+	bool attGrammer3func(Parser* parser) { 
+		Lid++;
+		Attribute& attributeOfL = parser->symbolTabel.getAttribute(L());
+		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+		Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
+		attributeOfL.quad = attributeOfM.quad;
+		attributeOfL.nextList = attributeOfS.nextList;
+		Mid--;
+		Sid--;
+		return true;
+	}
+
+	// M->' '
+	bool attGrammer4func(Parser* parser) {
+		Mid++;
+		Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+		attributeOfM.quad = parser->nextQuad;
+		return true;
+	}
+
+	// E->id
+	bool attGrammer5func(Parser* parser) { 
+		Eid++;
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); 
+		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id");
+		attributeOfE.place = attributeOfId.place;
+		return true;
+	}
+
+	// S->A
+	bool attGrammer6func(Parser* parser) { 
+		Sid++;
+		Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
+	//	attributeOfS.nextList = parser->makeList(parser->nextQuad);
+		Attribute& attributeOfA = parser->symbolTabel.getAttribute(A());
+
+		Aid--;
+		return true;
+	}
+
+	// A->G=E
+	bool attGrammer7func(Parser* parser) {
+		Aid++;
+		Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); 
+		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); 
+		parser->emit(":=", attributeOfE.place, " ", attributeOfG.place);
+		Gid--;
+		Eid--;
+		return true;
+	}
+
+	// T->E1 relop E2
+	bool attGrammer8func(Parser* parser) {
+		Tid++;
+		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); 
+		Attribute& attributeOfE2 = parser->symbolTabel.getAttribute(E());
+		Eid--;
+		Attribute& attributeOfE1 = parser->symbolTabel.getAttribute(E());
+		Attribute& attributeOfrelop = parser->symbolTabel.getAttribute("relop");
+		attributeOfT.trueList = parser->makeList(parser->nextQuad);
+		attributeOfT.falseList = parser->makeList(parser->nextQuad + 1);
+		string a = attributeOfrelop.op;
+		string b = "j";
+		b = b + a;
+		parser->emit(b, attributeOfE1.place, attributeOfE2.place, "0");
+		parser->emit("j", "-", "-", "0");
+		return true;
+	}
+
+	// G->id
+	bool attGrammer9func(Parser* parser) {
+		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id");
+		if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
+		Gid++;
+		Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); 
+		attributeOfG.place = attributeOfId.place;
+		return true;
+	}
+	void run() {
+
+		Parser parser("looplLRTable.csv");
+
+		AttGrammer attGrammer0;
+		attGrammer0.left = "S";
+		attGrammer0.right.push_back("S");
+		attGrammer0.function = attGrammer0func;
+		parser.attGrammers.push_back(attGrammer0);
+
+
+		// S->while B do L
+		AttGrammer attGrammer1;
+		attGrammer1.left = "S";
+		attGrammer1.right.push_back("while");
+		attGrammer1.right.push_back("B");
+		attGrammer1.right.push_back("do");
+		attGrammer1.right.push_back("L");
+		attGrammer1.function = attGrammer1func;
+		parser.attGrammers.push_back(attGrammer1);
+
+		// B->MT
+		AttGrammer attGrammer2;
+		attGrammer2.left = "B";
+		attGrammer2.right.push_back("M");
+		attGrammer2.right.push_back("T");
+		attGrammer2.function = attGrammer2func;
+		parser.attGrammers.push_back(attGrammer2);
+
+		// L->MS
+		AttGrammer attGrammer3;
+		attGrammer3.left = "L";
+		attGrammer3.right.push_back("M");
+		attGrammer3.right.push_back("S");
+		attGrammer3.function = attGrammer3func;
+		parser.attGrammers.push_back(attGrammer3);
+
+		// M->' '
+		AttGrammer attGrammer4;
+		attGrammer4.left = "M";
+		attGrammer4.right.push_back(" ");
+		attGrammer4.function = attGrammer4func;
+		parser.attGrammers.push_back(attGrammer4);
+
+		// E->id
+		AttGrammer attGrammer5;
+		attGrammer5.left = "E";
+		attGrammer5.right.push_back("id");
+		attGrammer5.function = attGrammer5func;
+		parser.attGrammers.push_back(attGrammer5);
+
+		// S->A
+		AttGrammer attGrammer6;
+		attGrammer6.left = "S";
+		attGrammer6.right.push_back("A");
+		attGrammer6.function = attGrammer6func;
+		parser.attGrammers.push_back(attGrammer6);
+
+		// A->G=E
+		AttGrammer attGrammer7;
+		attGrammer7.left = "A";
+		attGrammer7.right.push_back("G");
+		attGrammer7.right.push_back("=");
+		attGrammer7.right.push_back("E");
+		attGrammer7.function = attGrammer7func;
+		parser.attGrammers.push_back(attGrammer7);
+
+		// T->E relop T
+		AttGrammer attGrammer8;
+		attGrammer8.left = "T";
+		attGrammer8.right.push_back("E");
+		attGrammer8.right.push_back("relop");
+		attGrammer8.right.push_back("T");
+		attGrammer8.function = attGrammer8func;
+		parser.attGrammers.push_back(attGrammer8);
+
+
+
+		// G->id
+		AttGrammer attGrammer9;
+		attGrammer9.left = "G";
+		attGrammer9.right.push_back("id");
+		attGrammer9.function = attGrammer9func;
+		parser.attGrammers.push_back(attGrammer9);
+
+		vector<string> str;
+		string s;
+		cout << "璇疯緭鍏ユ潯浠惰鍙?\n";
+		while (1) {
+			cin >> s;
+			str.push_back(s);
+			if (s == string("#")) break;
+		}
+		parser.init(); // 鍒濆鍖栦竴涓?
+		if (parser.parse(str)) parser.print();
+		else std::cout << "璇硶鍑洪敊!" << std::endl;
+
+	}
+
+}
 int main() {
 }
