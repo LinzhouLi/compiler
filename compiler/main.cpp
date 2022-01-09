@@ -2,291 +2,294 @@
 #include "Parser.h"
 #include "LRAnalysisTable.h"
 
-namespace assignment {
 
-	int Eid = 0;
-	int Fid = 0;
-	int Tid = 0;
+int Sid = 0;
+int Bid = 0;
+int Lid = 0;
+int Mid = 0;
+int Tid = 0;
+int Eid = 0;
+int Aid = 0;
+int Gid = 0;
 
-	string E() {
-		return "E_" + std::to_string(Eid);
-	}
-
-	string F() {
-		return "F_" + std::to_string(Fid);
-	}
-
-	string T() {
-		return "T_" + std::to_string(Tid);
-	}
-
-	// S'->S
-	bool attGrammer1func(Parser* parser) {
-		return true;
-	}
-
-	// S->G=E
-	bool attGrammer2func(Parser* parser) {
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到T的所有属性
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		Eid--;
-		parser->emit(":=", attributeOfE.place, " ", attributeOfG.place);
-		return true;
-	}
-
-	// E->E+T
-	bool attGrammer3func(Parser* parser) {
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Tid--;
-		string newTemp = parser->getNewTemp();
-		parser->emit("+", attributeOfE.place, attributeOfT.place, newTemp);
-		attributeOfE.place = newTemp;// E.place := newtemp;
-		return true;
-	}
-
-	// E->E-T
-	bool attGrammer4func(Parser* parser) {
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Tid--;
-		string newTemp = parser->getNewTemp();
-		parser->emit("-", attributeOfE.place, attributeOfT.place, newTemp);
-		attributeOfE.place = newTemp;// E.place := newtemp;
-		return true;
-	}
-
-	// E->T
-	bool attGrammer5func(Parser* parser) {
-		Eid++;
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Tid--;
-		attributeOfE.place = attributeOfT.place;
-		return true;
-	}
-
-	// T->T*F
-	bool attGrammer6func(Parser* parser) {
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
-		Fid--;
-		string newTemp = parser->getNewTemp();
-		parser->emit("*", attributeOfT.place, attributeOfF.place, newTemp);
-		attributeOfT.place = newTemp;// T.place := newtemp;
-		return true;
-	}
-
-	// T->T/F
-	bool attGrammer7func(Parser* parser) {
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
-		if (attributeOfF.place == "0")  // 直接除以0错误
-			return false;
-		Fid--;
-		string newTemp = parser->getNewTemp();
-		parser->emit("/", attributeOfT.place, attributeOfF.place, newTemp);
-		attributeOfT.place = newTemp;// T.place := newtemp;
-		return true;
-	}
-
-	// T->F
-	bool attGrammer8func(Parser* parser) {
-		Tid++;
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); // 得到T的所有属性
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
-		Fid--;
-		attributeOfT.place = attributeOfF.place;
-		return true;
-		return true;
-	}
-
-	// F->(E)
-	bool attGrammer9func(Parser* parser) {
-		Fid++;
-		Attribute& attributeOfT = parser->symbolTabel.getAttribute(F()); // 得到T的所有属性
-		Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); // 得到E的所有属性
-		Eid--;
-		attributeOfT.place = attributeOfE.place;
-		return true;
-	}
-
-	// F->id
-	bool attGrammer10func(Parser* parser) {
-		Fid++;
-		Attribute& attributeOfF = parser->symbolTabel.getAttribute(F()); // 得到F的所有属性
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
-		attributeOfF.place = attributeOfId.place;
-		return true;
-	}
-
-	// G->id
-	bool attGrammer11func(Parser* parser) {
-		Attribute& attributeOfG = parser->symbolTabel.getAttribute("G"); // 得到F的所有属性
-		Attribute& attributeOfId = parser->symbolTabel.getAttribute("id"); // 得到Number的所有属性
-		if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
-		attributeOfG.place = attributeOfId.place;
-		return true;
-	}
-
-	void run() {
-
-		Parser parser("assignmentLRTable.csv");
-
-		// S'->S
-		AttGrammer attGrammer1;
-		attGrammer1.left = "S'";
-		attGrammer1.right.push_back("S");
-		attGrammer1.function = attGrammer1func;
-		parser.attGrammers.push_back(attGrammer1);
-
-		// S->G=E
-		AttGrammer attGrammer2;
-		attGrammer2.left = "S";
-		attGrammer2.right.push_back("G");
-		attGrammer2.right.push_back("=");
-		attGrammer2.right.push_back("E");
-		attGrammer2.function = attGrammer2func;
-		parser.attGrammers.push_back(attGrammer2);
-
-		// E->E+T
-		AttGrammer attGrammer3;
-		attGrammer3.left = "E";
-		attGrammer3.right.push_back("E");
-		attGrammer3.right.push_back("+");
-		attGrammer3.right.push_back("T");
-		attGrammer3.function = attGrammer3func;
-		parser.attGrammers.push_back(attGrammer3);
-
-		// E->E-T
-		AttGrammer attGrammer4;
-		attGrammer3.left = "E";
-		attGrammer3.right.push_back("E");
-		attGrammer3.right.push_back("-");
-		attGrammer3.right.push_back("T");
-		attGrammer4.function = attGrammer4func;
-		parser.attGrammers.push_back(attGrammer4);
-
-		// E->T
-		AttGrammer attGrammer5;
-		attGrammer5.left = "E";
-		attGrammer5.right.push_back("T");
-		attGrammer5.function = attGrammer5func;
-		parser.attGrammers.push_back(attGrammer5);
-
-		// T->T*F
-		AttGrammer attGrammer6;
-		attGrammer6.left = "T";
-		attGrammer6.right.push_back("T");
-		attGrammer6.right.push_back("*");
-		attGrammer6.right.push_back("F");
-		attGrammer6.function = attGrammer6func;
-		parser.attGrammers.push_back(attGrammer6);
-
-		// T->T/F
-		AttGrammer attGrammer7;
-		attGrammer7.left = "T";
-		attGrammer7.right.push_back("T");
-		attGrammer7.right.push_back("/");
-		attGrammer7.right.push_back("F");
-		attGrammer7.function = attGrammer7func;
-		parser.attGrammers.push_back(attGrammer7);
-
-		// T->F
-		AttGrammer attGrammer8;
-		attGrammer8.left = "T";
-		attGrammer8.right.push_back("F");
-		attGrammer8.function = attGrammer8func;
-		parser.attGrammers.push_back(attGrammer8);
-
-		// F->(E)
-		AttGrammer attGrammer9;
-		attGrammer9.left = "F";
-		attGrammer9.right.push_back("(");
-		attGrammer9.right.push_back("F");
-		attGrammer9.right.push_back(")");
-		attGrammer9.function = attGrammer9func;
-		parser.attGrammers.push_back(attGrammer9);
-
-		// F->id
-		AttGrammer attGrammer10;
-		attGrammer10.left = "F";
-		attGrammer10.right.push_back("id");
-		attGrammer10.function = attGrammer10func;
-		parser.attGrammers.push_back(attGrammer10);
-
-		// F->id
-		AttGrammer attGrammer11;
-		attGrammer11.left = "G";
-		attGrammer11.right.push_back("id");
-		attGrammer11.function = attGrammer11func;
-		parser.attGrammers.push_back(attGrammer11);
-
-		vector<string> str;
-		string s;
-		cout << "请输入赋值语句:\n";
-		while (1) {
-			cin >> s;
-			str.push_back(s);
-			if (s == string("#")) break;
-		}
-
-		parser.init(); // 初始化一下
-		if (parser.parse(str)) parser.print();
-		else std::cout << "语法出错!" << std::endl;
-
-	}
-
+string S() {
+	return "S_" + std::to_string(Sid);
 }
 
-namespace boolean {
-	int Eid = 0;
-	int Fid = 0;
-	int Tid = 0;
-
-	string E() {
-		return "E_" + std::to_string(Eid);
-	}
-
-	string F() {
-		return "F_" + std::to_string(Fid);
-	}
-
-	string T() {
-		return "T_" + std::to_string(Tid);
-	}
-
-	// S'->S
-	bool attGrammer1func(Parser* parser) {
-		return true;
-	}
-
-	// S->G=E
-	bool attGrammer2func(Parser* parser) {
-		return true;
-	}
-
-	void run() {
-		Parser parser("booleanLRTable");
-
-		// S'->S
-		AttGrammer attGrammer1;
-		attGrammer1.left = "S'";
-		attGrammer1.right.push_back("S");
-		attGrammer1.function = attGrammer1func;
-		parser.attGrammers.push_back(attGrammer1);
-
-		// S->G=E
-		AttGrammer attGrammer2;
-		attGrammer2.left = "S";
-		attGrammer2.right.push_back("G");
-		attGrammer2.right.push_back("=");
-		attGrammer2.right.push_back("E");
-		attGrammer2.function = attGrammer2func;
-		parser.attGrammers.push_back(attGrammer2);
-	}
+string B() {
+	return "B_" + std::to_string(Bid);
 }
+
+string L() {
+	return "L_" + std::to_string(Lid);
+}
+
+string M() {
+	return "M_" + std::to_string(Mid);
+}
+
+string T() {
+	return "T_" + std::to_string(Tid);
+}
+
+string E() {
+	return "E_" + std::to_string(Eid);
+}
+
+string A() {
+	return "A_" + std::to_string(Aid);
+}
+
+string G() {
+	return "G_" + std::to_string(Gid);
+}
+
+bool attGrammer0func(Parser* parser) {
+
+	return true;
+}
+
+// S->while B do L
+bool attGrammer1func(Parser* parser) { 
+	Sid++;
+	Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
+	Attribute& attributeOfB = parser->symbolTabel.getAttribute(B());
+	Attribute& attributeOfL = parser->symbolTabel.getAttribute(L());
+	if (attributeOfL.nextList != -1) {
+		parser->backPatch(attributeOfL.nextList, attributeOfB.quad);
+	}
+	
+	parser->backPatch(attributeOfB.trueList, attributeOfL.quad);
+	parser->emit("j", "-", "-", std::to_string(attributeOfB.quad));
+	Bid--;
+	Lid--;
+	return true;
+}
+
+// B->MT
+bool attGrammer2func(Parser* parser) { 
+	Bid++;
+	Attribute& attributeOfB = parser->symbolTabel.getAttribute(B()); 
+	Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T());
+	attributeOfB.quad = attributeOfM.quad;
+	attributeOfB.trueList = attributeOfT.trueList;
+	Mid--;
+	Tid--;
+	return true;
+}
+
+// L->MS
+bool attGrammer3func(Parser* parser) { 
+	Lid++;
+	Attribute& attributeOfL = parser->symbolTabel.getAttribute(L());
+	Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+	Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
+	attributeOfL.quad = attributeOfM.quad;
+	attributeOfL.nextList = attributeOfS.nextList;
+	Mid--;
+	Sid--;
+	return true;
+}
+
+// M->' '
+bool attGrammer4func(Parser* parser) {
+	Mid++;
+	Attribute& attributeOfM = parser->symbolTabel.getAttribute(M()); 
+	attributeOfM.quad = parser->nextQuad;
+	return true;
+}
+
+// E->id
+bool attGrammer5func(Parser* parser) { 
+	Eid++;
+	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); 
+	Attribute& attributeOfId = parser->symbolTabel.getAttribute("id");
+	attributeOfE.place = attributeOfId.place;
+	return true;
+}
+
+// S->A
+bool attGrammer6func(Parser* parser) { 
+	Sid++;
+	Attribute& attributeOfS = parser->symbolTabel.getAttribute(S());
+//	attributeOfS.nextList = parser->makeList(parser->nextQuad);
+	Attribute& attributeOfA = parser->symbolTabel.getAttribute(A());
+
+	Aid--;
+	return true;
+}
+
+// A->G=E
+bool attGrammer7func(Parser* parser) {
+	Aid++;
+	Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); 
+	Attribute& attributeOfE = parser->symbolTabel.getAttribute(E()); 
+	parser->emit(":=", attributeOfE.place, " ", attributeOfG.place);
+	Gid--;
+	Eid--;
+	return true;
+}
+
+// T->E1 relop E2
+bool attGrammer8func(Parser* parser) {
+	Tid++;
+	Attribute& attributeOfT = parser->symbolTabel.getAttribute(T()); 
+	Attribute& attributeOfE2 = parser->symbolTabel.getAttribute(E());
+	Eid--;
+	Attribute& attributeOfE1 = parser->symbolTabel.getAttribute(E());
+	Attribute& attributeOfrelop = parser->symbolTabel.getAttribute("relop");
+	attributeOfT.trueList = parser->makeList(parser->nextQuad);
+	attributeOfT.falseList = parser->makeList(parser->nextQuad + 1);
+	string a = attributeOfrelop.op;
+	string b = "j";
+	b = b + a;
+	parser->emit(b, attributeOfE1.place, attributeOfE2.place, "0");
+	parser->emit("j", "-", "-", "0");
+	return true;
+}
+
+// G->id
+bool attGrammer9func(Parser* parser) {
+	Attribute& attributeOfId = parser->symbolTabel.getAttribute("id");
+	if (attributeOfId.type != "Variable") return false; // G不是变量, 出错
+	Gid++;
+	Attribute& attributeOfG = parser->symbolTabel.getAttribute(G()); 
+	attributeOfG.place = attributeOfId.place;
+	return true;
+}
+
+
+
 
 int main() {
-	assignment::run();
+	
+	Parser parser;
+	// S-> S
+	AttGrammer attGrammer0;
+	attGrammer0.left = "S";
+	attGrammer0.right.push_back("S");
+	attGrammer0.function = attGrammer0func;
+	parser.attGrammers.push_back(attGrammer0);
+
+
+	// S->while B do L
+	AttGrammer attGrammer1;
+	attGrammer1.left = "S";
+	attGrammer1.right.push_back("while");
+	attGrammer1.right.push_back("B");
+	attGrammer1.right.push_back("do");
+	attGrammer1.right.push_back("L");
+	attGrammer1.function = attGrammer1func;
+	parser.attGrammers.push_back(attGrammer1);
+
+	// B->MT
+	AttGrammer attGrammer2;
+	attGrammer2.left = "B";
+	attGrammer2.right.push_back("M");
+	attGrammer2.right.push_back("T");
+	attGrammer2.function = attGrammer2func;
+	parser.attGrammers.push_back(attGrammer2);
+
+	// L->MS
+	AttGrammer attGrammer3;
+	attGrammer3.left = "L";
+	attGrammer3.right.push_back("M");
+	attGrammer3.right.push_back("S");
+	attGrammer3.function = attGrammer3func;
+	parser.attGrammers.push_back(attGrammer3);
+
+	// M->' '
+	AttGrammer attGrammer4;
+	attGrammer4.left = "M";
+	attGrammer4.right.push_back(" ");
+	attGrammer4.function = attGrammer4func;
+	parser.attGrammers.push_back(attGrammer4);
+
+	// E->id
+	AttGrammer attGrammer5;
+	attGrammer5.left = "E";
+	attGrammer5.right.push_back("id");
+	attGrammer5.function = attGrammer5func;
+	parser.attGrammers.push_back(attGrammer5);
+
+	// S->A
+	AttGrammer attGrammer6;
+	attGrammer6.left = "S";
+	attGrammer6.right.push_back("A");
+	attGrammer6.function = attGrammer6func;
+	parser.attGrammers.push_back(attGrammer6);
+
+	// A->G=E
+	AttGrammer attGrammer7;
+	attGrammer7.left = "A";
+	attGrammer7.right.push_back("G");
+	attGrammer7.right.push_back("=");
+	attGrammer7.right.push_back("E");
+	attGrammer7.function = attGrammer7func;
+	parser.attGrammers.push_back(attGrammer7);
+
+	// T->E relop T
+	AttGrammer attGrammer8;
+	attGrammer8.left = "T";
+	attGrammer8.right.push_back("E");
+	attGrammer8.right.push_back("relop");
+	attGrammer8.right.push_back("T");
+	attGrammer8.function = attGrammer8func;
+	parser.attGrammers.push_back(attGrammer8);
+
+
+
+	// G->id
+	AttGrammer attGrammer9;
+	attGrammer9.left = "G";
+	attGrammer9.right.push_back("id");
+	attGrammer9.function = attGrammer9func;
+	parser.attGrammers.push_back(attGrammer9);
+
+	std::cout << "while  1 > 2 do  a = 5" << '\n';
+	vector<string> str;
+	str.push_back("while");
+	str.push_back(" ");
+	str.push_back("1");
+	str.push_back(">");
+	str.push_back("2");
+	str.push_back("do");
+	str.push_back(" ");
+	str.push_back("a");
+	str.push_back("=");
+	str.push_back("5");
+	str.push_back("#");
+
+	parser.init(); // 初始化一下
+	if (parser.parse(str)) parser.print();
+	else std::cout << "语法出错!" << std::endl;
+
+	std::cout<<'\n' << "while  1 > 2 do  while  3 < a do  b = 6" << '\n';
+	vector<string> str1;
+	str1.push_back("while");
+	str1.push_back(" ");
+	str1.push_back("1");
+	str1.push_back(">");
+	str1.push_back("2");
+	str1.push_back("do");
+	str1.push_back(" ");
+	str1.push_back("while");
+	str1.push_back(" ");
+	str1.push_back("3");
+	str1.push_back("<");
+	str1.push_back("a");
+	str1.push_back("do");
+	str1.push_back(" ");
+	str1.push_back("b");
+	str1.push_back("=");
+	str1.push_back("6");
+	str1.push_back("#");
+
+	parser.init(); // 初始化一下
+	if (parser.parse(str1)) parser.print();
+	else std::cout << "语法出错!" << std::endl;
+
+	return 0;
+	
 }

@@ -42,7 +42,6 @@ public:
 	SymbolTable symbolTabel; // 符号表
 
 	Parser();
-	Parser(const string& filePath);
 
 	void init();
 	bool parse(const vector<string>& str);
@@ -54,12 +53,6 @@ public:
 	void print();
 	string getNewTemp();
 };
-
-Parser::Parser(const string& filePath) : LRTable(filePath) {
-	nextQuad = 0;
-	tempId = 0;
-	terminalId = 0;
-}
 
 Parser::Parser() {
 	nextQuad = 0;
@@ -74,13 +67,12 @@ string Parser::getNewTemp() {
 }
 
 void Parser::emit(const string& op, const string& arg1, const string& arg2, const string& result) {
-	Quaternion q = Quaternion(op, arg1, arg2, result);
+	Quaternion q (op, arg1, arg2, result);
 	quaternions.push_back(q);
 	nextQuad++;
 }
 
 int Parser::makeList(const int& i) {
-	quaternions[i].result = "0";
 	return i;
 }
 
@@ -123,6 +115,7 @@ bool Parser::parse(const vector<string>& str) {
 		int s = states.top();
 		string symbol = str[p];
 		Action action;
+		
 		if (isNumber(symbol)) { // 判断symbol是否为数字
 			Attribute& terminal = symbolTabel.getAttribute("id");
 			terminal.place = symbol;
@@ -135,16 +128,19 @@ bool Parser::parse(const vector<string>& str) {
 			terminal.type = string("Bool");
 			action = LRTable.getAction(s, string("id"));
 		}
-		else if (ifKeywords(symbol)) { // 判断symbol是否为合法关键字
-			action = LRTable.getAction(s, symbol);
-		}
 		else if (ifVariable(symbol)) { // 判断symbol是否为合法变量
-			Attribute& terminal = symbolTabel.getAttribute("id");
-			terminal.place = symbol;
-			terminal.type = string("Variable");
-			action = LRTable.getAction(s, string("id"));
+			if (LRTable.getAction(s, symbol).act == Act::Fail) {
+				Attribute& terminal = symbolTabel.getAttribute("id");
+				terminal.place = symbol;
+				terminal.type = string("Variable");
+				action = LRTable.getAction(s, string("id"));
+			}
+			else
+			{
+		         action = LRTable.getAction(s, symbol);
+			}
 		}
-		else if (ifRelop(symbol)) { // 判断symbol是否为合法关系运算符
+		else if (ifRelop(symbol)) {
 			Attribute& terminal = symbolTabel.getAttribute("relop");
 			terminal.op = symbol;
 			terminal.type = string("Relop");
