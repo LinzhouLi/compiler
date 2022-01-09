@@ -40,6 +40,7 @@ public:
 	int nextQuad; // 下一条四元式的标号
 	vector<AttGrammer> attGrammers; // 属性文法
 	SymbolTable symbolTabel; // 符号表
+	SymbolTable variableTable; // 符号表
 
 	Parser();
 	Parser(const string& filePath);
@@ -80,7 +81,6 @@ void Parser::emit(const string& op, const string& arg1, const string& arg2, cons
 }
 
 int Parser::makeList(const int& i) {
-	quaternions[i].result = "0";
 	return i;
 }
 
@@ -135,6 +135,12 @@ bool Parser::parse(const vector<string>& str) {
 			terminal.type = string("Bool");
 			action = LRTable.getAction(s, string("id"));
 		}
+		else if (ifRelop(symbol)) { // 判断symbol是否为合法关系运算符
+			Attribute& terminal = symbolTabel.getAttribute("relop");
+			terminal.op = symbol;
+			terminal.type = string("Relop");
+			action = LRTable.getAction(s, string("relop"));
+		}
 		else if (ifKeywords(symbol)) { // 判断symbol是否为合法关键字
 			action = LRTable.getAction(s, symbol);
 		}
@@ -143,12 +149,6 @@ bool Parser::parse(const vector<string>& str) {
 			terminal.place = symbol;
 			terminal.type = string("Variable");
 			action = LRTable.getAction(s, string("id"));
-		}
-		else if (ifRelop(symbol)) { // 判断symbol是否为合法关系运算符
-			Attribute& terminal = symbolTabel.getAttribute("relop");
-			terminal.op = symbol;
-			terminal.type = string("Relop");
-			action = LRTable.getAction(s, string("relop"));
 		}
 		else action = LRTable.getAction(s, symbol); // 匹配其他关键字
 
@@ -164,8 +164,7 @@ bool Parser::parse(const vector<string>& str) {
 			case Act::Reduce: { // 规约
 				AttGrammer grammer = attGrammers[action.state]; // 对应属性文法
 				if (grammer.function) {
-					if (grammer.function(this)) { } // 执行对应语义动作
-					else fail = true;
+					fail = !grammer.function(this); // 执行对应语义动作
 				}
 				for (int i = 0; i < grammer.right.size(); i++) {
 					states.pop();
@@ -205,7 +204,10 @@ bool Parser::parse(const vector<string>& str) {
 }
 
 void Parser::print() {
-	for (auto quaternion : quaternions) {
-		std::cout << setw(4) << quaternion.op << setw(10) << quaternion.arg1 << setw(10) << quaternion.arg2 << setw(5) << quaternion.result << std::endl;
+	cout << "\n中间代码:" << endl;
+	std::cout << setw(8) << "op" << setw(10) << "arg1" << setw(10) << "arg2" << setw(7) << "result" << std::endl;
+	int len = quaternions.size();
+	for (int i = 0; i < len; i++) {
+		std::cout << setw(4) << i << setw(4) << quaternions[i].op << setw(10) << quaternions[i].arg1 << setw(10) << quaternions[i].arg2 << setw(5) << quaternions[i].result << std::endl;
 	}
 }

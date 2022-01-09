@@ -9,9 +9,9 @@ using std::string;
 using std::vector;
 
 const vector<string> keyWords = {
-	"+", "-", "*", "/", "#", "=", "(", ")"
-	"if", "else", "then", "and", "or"
-	"||", "&&", "!"
+	"+", "-", "*", "/", "#", "=", "(", ")",
+	"if", "else", "then", "and", "or",
+	"||", "&&", "!", "epsilon"
 };
 
 enum class Act { // Action÷÷¿‡
@@ -54,7 +54,7 @@ public:
 	string place;
 	string op;
 
-	Attribute() : type(""), trueList(-1), falseList(-1), nextList(-1), quad(-1), place(""), op("") { }
+	Attribute() : type("Undefined"), trueList(-1), falseList(-1), nextList(-1), quad(-1), place(""), op("") { }
 };
 
 
